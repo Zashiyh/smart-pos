@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 
-export default function LoginPage() {
+export default function RegisterPage() {
 
 
   const router = useRouter();
@@ -13,8 +13,10 @@ export default function LoginPage() {
 
   const [form, setForm] = useState({
 
+    name: "",
     email: "",
     password: "",
+    role: "Cashier",
 
   });
 
@@ -29,7 +31,7 @@ export default function LoginPage() {
 
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) {
 
 
@@ -69,7 +71,7 @@ export default function LoginPage() {
 
 
       const res = await fetch(
-        "/api/auth/login",
+        "/api/auth/register",
         {
 
           method: "POST",
@@ -89,9 +91,7 @@ export default function LoginPage() {
 
 
 
-
       const data = await res.json();
-
 
 
 
@@ -100,32 +100,25 @@ export default function LoginPage() {
 
 
         setMessage(
-          "Login successful."
+          "Account created successfully."
         );
-
 
 
         setTimeout(() => {
 
-          router.push("/dashboard");
+          router.push("/login");
 
-          router.refresh();
-
-        },800);
+        },1500);
 
 
 
-      }
-      else{
+      }else{
 
 
-        setMessage(
-          data.message
-        );
+        setMessage(data.message);
 
 
       }
-
 
 
 
@@ -153,8 +146,6 @@ export default function LoginPage() {
 
 
 
-
-
   return (
 
     <div
@@ -167,7 +158,6 @@ export default function LoginPage() {
         p-6
       "
     >
-
 
 
 
@@ -185,20 +175,14 @@ export default function LoginPage() {
 
 
 
-
-
         <h1
           className="
             text-3xl
             font-bold
           "
         >
-
-          Welcome Back
-
+          Create Account
         </h1>
-
-
 
 
 
@@ -209,9 +193,7 @@ export default function LoginPage() {
             text-muted-foreground
           "
         >
-
-          Login to your SmartPOS account
-
+          Register a new SmartPOS user
         </p>
 
 
@@ -220,18 +202,41 @@ export default function LoginPage() {
 
 
 
-
-
         <form
-
           onSubmit={handleSubmit}
-
           className="
             mt-6
             space-y-4
           "
-
         >
+
+
+
+
+
+          <input
+
+            name="name"
+
+            value={form.name}
+
+            onChange={handleChange}
+
+            placeholder="Full Name"
+
+            className="
+              w-full
+              rounded-xl
+              border
+              bg-transparent
+              px-4
+              py-3
+              outline-none
+            "
+
+            required
+
+          />
 
 
 
@@ -263,7 +268,6 @@ export default function LoginPage() {
             required
 
           />
-
 
 
 
@@ -303,6 +307,44 @@ export default function LoginPage() {
 
 
 
+          <select
+
+            name="role"
+
+            value={form.role}
+
+            onChange={handleChange}
+
+            className="
+              w-full
+              rounded-xl
+              border
+              bg-background
+              px-4
+              py-3
+              outline-none
+            "
+
+          >
+
+            <option value="Admin">
+              Admin
+            </option>
+
+
+            <option value="Cashier">
+              Cashier
+            </option>
+
+
+          </select>
+
+
+
+
+
+
+
 
 
           <button
@@ -321,10 +363,9 @@ export default function LoginPage() {
 
           >
 
-
             {loading
-              ? "Logging in..."
-              : "Login"
+              ? "Creating..."
+              : "Create Account"
             }
 
 
@@ -334,11 +375,7 @@ export default function LoginPage() {
 
 
 
-
         </form>
-
-
-
 
 
 
@@ -368,7 +405,6 @@ export default function LoginPage() {
 
 
 
-
         <p
           className="
             mt-6
@@ -377,7 +413,7 @@ export default function LoginPage() {
           "
         >
 
-          Don't have an account?
+          Already have an account?
 
 
           {" "}
@@ -385,7 +421,7 @@ export default function LoginPage() {
 
           <Link
 
-            href="/register"
+            href="/login"
 
             className="
               font-semibold
@@ -394,10 +430,9 @@ export default function LoginPage() {
 
           >
 
-            Register
+            Login
 
           </Link>
-
 
 
         </p>
@@ -406,10 +441,7 @@ export default function LoginPage() {
 
 
 
-
-
       </div>
-
 
 
 

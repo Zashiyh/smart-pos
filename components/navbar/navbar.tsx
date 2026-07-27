@@ -9,7 +9,7 @@ import {
   User,
 } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import ThemeToggle from "../theme-toggle";
@@ -20,11 +20,77 @@ export default function Navbar() {
 
   const router = useRouter();
 
+
   const [open, setOpen] = useState(false);
+
+
+  const [user, setUser] = useState<any>(null);
+
+
+
+
+
+  useEffect(() => {
+
+
+    async function getUser() {
+
+
+      try {
+
+
+        const res = await fetch(
+          "/api/auth/me",
+          {
+            cache: "no-store",
+          }
+        );
+
+
+        const data = await res.json();
+
+
+
+        if (data.success) {
+
+          setUser(data.user);
+
+        }
+
+
+
+      } catch (error) {
+
+
+        console.log(
+          "User fetch error:",
+          error
+        );
+
+
+      }
+
+
+    }
+
+
+
+    getUser();
+
+
+
+  }, []);
+
+
+
+
+
+
 
 
 
   async function logout() {
+
 
     await fetch(
       "/api/auth/logout",
@@ -34,11 +100,19 @@ export default function Navbar() {
     );
 
 
+
     router.push("/login");
+
 
     router.refresh();
 
+
+
   }
+
+
+
+
 
 
 
@@ -64,7 +138,10 @@ export default function Navbar() {
 
 
 
+
+
       {/* Search */}
+
 
       <div
         className="
@@ -81,6 +158,7 @@ export default function Navbar() {
         "
       >
 
+
         <Search
           className="
             h-5
@@ -90,18 +168,27 @@ export default function Navbar() {
         />
 
 
+
         <input
+
           type="text"
+
           placeholder="Search products, sales..."
+
           className="
             w-full
             bg-transparent
             text-sm
             outline-none
           "
+
         />
 
+
+
       </div>
+
+
 
 
 
@@ -123,9 +210,12 @@ export default function Navbar() {
 
 
 
+
         {/* Theme Toggle */}
 
+
         <ThemeToggle />
+
 
 
 
@@ -137,7 +227,9 @@ export default function Navbar() {
 
 
         <button
+
           type="button"
+
           className="
             relative
             flex
@@ -149,7 +241,9 @@ export default function Navbar() {
             border
             hover:bg-muted
           "
+
         >
+
 
           <Bell
             className="
@@ -157,6 +251,7 @@ export default function Navbar() {
               w-5
             "
           />
+
 
 
           <span
@@ -171,6 +266,8 @@ export default function Navbar() {
             "
           />
 
+
+
         </button>
 
 
@@ -184,6 +281,7 @@ export default function Navbar() {
         {/* Profile Dropdown */}
 
 
+
         <div
           className="
             relative
@@ -192,9 +290,14 @@ export default function Navbar() {
 
 
 
+
+
           <button
+
             type="button"
+
             onClick={() => setOpen(!open)}
+
             className="
               flex
               items-center
@@ -205,7 +308,9 @@ export default function Navbar() {
               py-2
               hover:bg-muted
             "
+
           >
+
 
 
 
@@ -220,6 +325,8 @@ export default function Navbar() {
 
 
 
+
+
             <div
               className="
                 hidden
@@ -228,14 +335,19 @@ export default function Navbar() {
               "
             >
 
+
               <p
                 className="
                   text-sm
                   font-semibold
                 "
               >
-                Admin
+
+                {user?.role || "User"}
+
               </p>
+
+
 
 
               <p
@@ -244,11 +356,16 @@ export default function Navbar() {
                   text-muted-foreground
                 "
               >
-                Administrator
+
+                {user?.email || "Loading..."}
+
               </p>
 
 
+
             </div>
+
+
 
 
 
@@ -262,7 +379,11 @@ export default function Navbar() {
 
 
 
+
           </button>
+
+
+
 
 
 
@@ -276,6 +397,7 @@ export default function Navbar() {
 
 
             <div
+
               className="
                 absolute
                 right-0
@@ -287,7 +409,9 @@ export default function Navbar() {
                 p-3
                 shadow-xl
               "
+
             >
+
 
 
 
@@ -296,21 +420,30 @@ export default function Navbar() {
               {/* User Info */}
 
 
+
               <div
+
                 className="
                   mb-3
                   border-b
                   pb-3
                 "
+
               >
+
+
 
                 <p
                   className="
                     font-semibold
                   "
                 >
-                  Sashika Madushan
+
+                  {user?.name || "User"}
+
                 </p>
+
+
 
 
 
@@ -320,8 +453,25 @@ export default function Navbar() {
                     text-muted-foreground
                   "
                 >
-                  admin@smartpos.com
+
+                  {user?.email || "Loading..."}
+
                 </p>
+
+
+
+                <p
+                  className="
+                    mt-1
+                    text-xs
+                    text-muted-foreground
+                  "
+                >
+
+                  Role: {user?.role || "User"}
+
+                </p>
+
 
 
               </div>
@@ -334,11 +484,14 @@ export default function Navbar() {
 
 
 
-              {/* Profile Button */}
+              {/* Profile */}
+
 
 
               <button
+
                 type="button"
+
                 className="
                   flex
                   w-full
@@ -348,7 +501,9 @@ export default function Navbar() {
                   p-3
                   hover:bg-muted
                 "
+
               >
+
 
                 <User
                   className="
@@ -357,7 +512,9 @@ export default function Navbar() {
                   "
                 />
 
+
                 Profile
+
 
 
               </button>
@@ -367,9 +524,6 @@ export default function Navbar() {
 
 
 
-
-
-              {/* Divider */}
 
 
               <div
@@ -389,9 +543,13 @@ export default function Navbar() {
               {/* Logout */}
 
 
+
               <button
+
                 type="button"
+
                 onClick={logout}
+
                 className="
                   flex
                   w-full
@@ -402,7 +560,10 @@ export default function Navbar() {
                   text-red-500
                   hover:bg-red-500/10
                 "
+
               >
+
+
 
                 <LogOut
                   className="
@@ -411,11 +572,13 @@ export default function Navbar() {
                   "
                 />
 
+
+
                 Logout
 
 
-              </button>
 
+              </button>
 
 
 
@@ -432,7 +595,11 @@ export default function Navbar() {
 
 
 
+
+
       </div>
+
+
 
 
 
