@@ -1,3 +1,5 @@
+import { cookies } from "next/headers";
+
 import StatsCard from "@/components/dashboard/stats-card";
 import SalesOverview from "@/components/dashboard/sales-overview";
 import RecentSales from "@/components/dashboard/recent-sales";
@@ -6,35 +8,89 @@ import TopProducts from "@/components/dashboard/top-products";
 import FadeIn from "@/components/animations/fade-in";
 
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+
+
+  const cookieStore = await cookies();
+
+  const token = cookieStore.get("token")?.value;
+
+
+  let user = null;
+
+
+
+  if (token) {
+
+    try {
+
+      const res = await fetch(
+        "http://localhost:3000/api/auth/me",
+        {
+          headers: {
+            Cookie: `token=${token}`,
+          },
+          cache: "no-store",
+        }
+      );
+
+
+      const data = await res.json();
+
+
+      if (data.success) {
+
+        user = data.user;
+
+      }
+
+
+    } catch (error) {
+
+      console.log(
+        "User fetch error:",
+        error
+      );
+
+    }
+
+  }
+
 
 
   const stats = [
+
     {
       title: "Today's Sales",
       value: "£12,450",
       icon: "sales",
       description: "+12% from yesterday",
     },
+
     {
       title: "Today's Orders",
       value: "248",
       icon: "orders",
       description: "+8% from yesterday",
     },
+
     {
       title: "Monthly Revenue",
       value: "£86,200",
       icon: "revenue",
       description: "This month's income",
     },
+
     {
       title: "Total Profit",
       value: "£32,500",
       icon: "profit",
       description: "After expenses",
     },
+
   ];
+
+
 
 
 
@@ -57,6 +113,7 @@ export default function DashboardPage() {
 
         <div>
 
+
           <h1
             className="
               text-3xl
@@ -67,13 +124,36 @@ export default function DashboardPage() {
           </h1>
 
 
+
           <p
             className="
               text-muted-foreground
             "
           >
-            Welcome back to SmartPOS Pro
+
+            Welcome back,{" "}
+            {user?.email || "User"} 👋
+
           </p>
+
+
+
+          {user && (
+
+            <p
+              className="
+                mt-1
+                text-sm
+                text-muted-foreground
+              "
+            >
+
+              Role: {user.role}
+
+            </p>
+
+          )}
+
 
 
         </div>
@@ -86,6 +166,7 @@ export default function DashboardPage() {
 
       {/* Stats Cards */}
 
+
       <div
         className="
           grid
@@ -95,12 +176,15 @@ export default function DashboardPage() {
         "
       >
 
+
         {stats.map((item, index) => (
+
 
           <FadeIn
             key={item.title}
             delay={index * 0.1}
           >
+
 
             <StatsCard
               title={item.title}
@@ -109,9 +193,12 @@ export default function DashboardPage() {
               description={item.description}
             />
 
+
           </FadeIn>
 
+
         ))}
+
 
       </div>
 
@@ -120,6 +207,7 @@ export default function DashboardPage() {
 
 
       {/* Sales Overview */}
+
 
       <FadeIn delay={0.4}>
 
@@ -132,7 +220,9 @@ export default function DashboardPage() {
 
 
 
+
       {/* Recent Sales + Low Stock */}
+
 
       <div
         className="
@@ -142,19 +232,26 @@ export default function DashboardPage() {
         "
       >
 
+
         <FadeIn delay={0.5}>
+
 
           <RecentSales />
 
+
         </FadeIn>
+
 
 
 
         <FadeIn delay={0.6}>
 
+
           <LowStock />
 
+
         </FadeIn>
+
 
 
       </div>
@@ -164,17 +261,23 @@ export default function DashboardPage() {
 
 
 
+
       {/* Top Products */}
+
 
       <FadeIn delay={0.7}>
 
+
         <TopProducts />
 
+
       </FadeIn>
+
 
 
 
     </div>
 
   );
+
 }
