@@ -5,12 +5,41 @@ import {
   Bell,
   UserCircle,
   ChevronDown,
+  LogOut,
+  User,
 } from "lucide-react";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import ThemeToggle from "../theme-toggle";
 
 
 export default function Navbar() {
+
+
+  const router = useRouter();
+
+  const [open, setOpen] = useState(false);
+
+
+
+  async function logout() {
+
+    await fetch(
+      "/api/auth/logout",
+      {
+        method: "POST",
+      }
+    );
+
+
+    router.push("/login");
+
+    router.refresh();
+
+  }
+
 
 
   return (
@@ -78,7 +107,10 @@ export default function Navbar() {
 
 
 
+
+
       {/* Actions */}
+
 
       <div
         className="
@@ -99,7 +131,10 @@ export default function Navbar() {
 
 
 
+
+
         {/* Notification */}
+
 
         <button
           type="button"
@@ -116,7 +151,12 @@ export default function Navbar() {
           "
         >
 
-          <Bell className="h-5 w-5" />
+          <Bell
+            className="
+              h-5
+              w-5
+            "
+          />
 
 
           <span
@@ -128,8 +168,6 @@ export default function Navbar() {
               w-2.5
               rounded-full
               bg-red-500
-              ring-2
-              ring-background
             "
           />
 
@@ -140,67 +178,254 @@ export default function Navbar() {
 
 
 
-        {/* Profile */}
+
+
+
+        {/* Profile Dropdown */}
+
 
         <div
           className="
-            flex
-            items-center
-            gap-2
-            rounded-xl
-            border
-            px-3
-            py-2
-            hover:bg-muted
+            relative
           "
         >
 
-          <UserCircle
-            className="
-              h-7
-              w-7
-              text-primary
-            "
-          />
 
 
-          <div
+          <button
+            type="button"
+            onClick={() => setOpen(!open)}
             className="
-              hidden
-              md:block
+              flex
+              items-center
+              gap-2
+              rounded-xl
+              border
+              px-3
+              py-2
+              hover:bg-muted
             "
           >
 
-            <p
+
+
+            <UserCircle
               className="
-                text-sm
-                font-semibold
+                h-7
+                w-7
+                text-primary
+              "
+            />
+
+
+
+
+            <div
+              className="
+                hidden
+                text-left
+                md:block
               "
             >
-              Admin
-            </p>
+
+              <p
+                className="
+                  text-sm
+                  font-semibold
+                "
+              >
+                Admin
+              </p>
 
 
-            <p
+              <p
+                className="
+                  text-xs
+                  text-muted-foreground
+                "
+              >
+                Administrator
+              </p>
+
+
+            </div>
+
+
+
+
+            <ChevronDown
               className="
-                text-xs
-                text-muted-foreground
+                h-4
+                w-4
+              "
+            />
+
+
+
+          </button>
+
+
+
+
+
+
+
+
+
+          {open && (
+
+
+            <div
+              className="
+                absolute
+                right-0
+                mt-3
+                w-64
+                rounded-2xl
+                border
+                bg-background
+                p-3
+                shadow-xl
               "
             >
-              Administrator
-            </p>
-
-          </div>
 
 
-          <ChevronDown
-            className="
-              hidden
-              h-4
-              w-4
-              md:block
-            "
-          />
+
+
+
+              {/* User Info */}
+
+
+              <div
+                className="
+                  mb-3
+                  border-b
+                  pb-3
+                "
+              >
+
+                <p
+                  className="
+                    font-semibold
+                  "
+                >
+                  Sashika Madushan
+                </p>
+
+
+
+                <p
+                  className="
+                    text-sm
+                    text-muted-foreground
+                  "
+                >
+                  admin@smartpos.com
+                </p>
+
+
+              </div>
+
+
+
+
+
+
+
+
+
+              {/* Profile Button */}
+
+
+              <button
+                type="button"
+                className="
+                  flex
+                  w-full
+                  items-center
+                  gap-3
+                  rounded-xl
+                  p-3
+                  hover:bg-muted
+                "
+              >
+
+                <User
+                  className="
+                    h-5
+                    w-5
+                  "
+                />
+
+                Profile
+
+
+              </button>
+
+
+
+
+
+
+
+
+              {/* Divider */}
+
+
+              <div
+                className="
+                  my-2
+                  border-t
+                "
+              />
+
+
+
+
+
+
+
+
+              {/* Logout */}
+
+
+              <button
+                type="button"
+                onClick={logout}
+                className="
+                  flex
+                  w-full
+                  items-center
+                  gap-3
+                  rounded-xl
+                  p-3
+                  text-red-500
+                  hover:bg-red-500/10
+                "
+              >
+
+                <LogOut
+                  className="
+                    h-5
+                    w-5
+                  "
+                />
+
+                Logout
+
+
+              </button>
+
+
+
+
+
+
+            </div>
+
+
+          )}
+
 
 
         </div>
@@ -214,4 +439,5 @@ export default function Navbar() {
     </header>
 
   );
+
 }
