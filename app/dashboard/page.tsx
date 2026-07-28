@@ -5,117 +5,67 @@ import LowStock from "@/components/dashboard/low-stock";
 import TopProducts from "@/components/dashboard/top-products";
 import FadeIn from "@/components/animations/fade-in";
 
+import {
+  Package,
+  Boxes,
+  AlertTriangle,
+  Wallet,
+} from "lucide-react";
 
-export default function DashboardPage() {
 
 
-  const stats = [
-    {
-      title: "Today's Sales",
-      value: "£12,450",
-      icon: "sales",
-      description: "+12% from yesterday",
-    },
-    {
-      title: "Today's Orders",
-      value: "248",
-      icon: "orders",
-      description: "+8% from yesterday",
-    },
-    {
-      title: "Monthly Revenue",
-      value: "£86,200",
-      icon: "revenue",
-      description: "This month's income",
-    },
-    {
-      title: "Total Profit",
-      value: "£32,500",
-      icon: "profit",
-      description: "After expenses",
-    },
-  ];
 
+// =================================
+// GET PRODUCTS
+// =================================
 
+async function getProducts(){
 
-  return (
 
-    <div
-      className="
-        min-h-screen
-        space-y-8
-        rounded-3xl
-        bg-muted/30
-        p-6
-      "
-    >
+  try{
 
 
-      {/* Header */}
+    const res = await fetch(
+      "http://localhost:3000/api/products",
+      {
+        cache:"no-store",
+      }
+    );
 
-      <FadeIn>
 
-        <div>
 
-          <h1
-            className="
-              text-3xl
-              font-bold
-            "
-          >
-            Dashboard
-          </h1>
+    const data = await res.json();
 
 
-          <p
-            className="
-              text-muted-foreground
-            "
-          >
-            SmartPOS overview and analytics
-          </p>
 
+    if(data.success){
 
-        </div>
+      return data.products;
 
-      </FadeIn>
+    }
 
 
 
+    return [];
 
 
 
+  }catch(error){
 
-      {/* Stats Cards */}
 
-      <div
-        className="
-          grid
-          gap-6
-          md:grid-cols-2
-          xl:grid-cols-4
-        "
-      >
+    console.log(
+      "Dashboard product error:",
+      error
+    );
 
-        {stats.map((item, index) => (
 
-          <FadeIn
-            key={item.title}
-            delay={index * 0.1}
-          >
+    return [];
 
-            <StatsCard
-              title={item.title}
-              value={item.value}
-              icon={item.icon}
-              description={item.description}
-            />
+  }
 
-          </FadeIn>
 
-        ))}
+}
 
-      </div>
 
 
 
@@ -123,70 +73,368 @@ export default function DashboardPage() {
 
 
 
+// =================================
+// DASHBOARD PAGE
+// =================================
 
-      {/* Sales Overview */}
 
-      <FadeIn delay={0.4}>
+export default async function DashboardPage(){
 
-        <SalesOverview />
 
-      </FadeIn>
 
+const products = await getProducts();
 
 
 
 
 
+const totalProducts = products.length;
 
 
 
-      {/* Recent Sales + Low Stock */}
+const totalStock = products.reduce(
+(total:any,product:any)=>
+total + Number(product.stock || 0),
+0
+);
 
-      <div
-        className="
-          grid
-          gap-6
-          lg:grid-cols-2
-        "
-      >
 
-        <FadeIn delay={0.5}>
 
-          <RecentSales />
 
-        </FadeIn>
 
+const lowStockProducts = products.filter(
+(product:any)=>
+product.stock <= product.minStock
+);
 
 
-        <FadeIn delay={0.6}>
 
-          <LowStock />
 
-        </FadeIn>
 
 
-      </div>
+const inventoryValue = products.reduce(
+(total:any,product:any)=>
 
+total +
+(
+Number(product.costPrice || 0)
+*
+Number(product.stock || 0)
+),
 
+0
 
+);
 
 
 
 
 
 
-      {/* Top Products */}
 
-      <FadeIn delay={0.7}>
+const stats = [
 
-        <TopProducts />
+{
 
-      </FadeIn>
+title:"Total Products",
 
+value:totalProducts,
 
+icon:Package,
 
-    </div>
+description:"Products in inventory"
 
-  );
+},
+
+
+{
+
+title:"Total Stock",
+
+value:totalStock,
+
+icon:Boxes,
+
+description:"Available stock quantity"
+
+},
+
+
+
+{
+
+title:"Low Stock Items",
+
+value:lowStockProducts.length,
+
+icon:AlertTriangle,
+
+description:"Need restocking"
+
+},
+
+
+
+
+{
+
+title:"Inventory Value",
+
+value:`£${inventoryValue.toLocaleString()}`,
+
+icon:Wallet,
+
+description:"Current stock value"
+
+}
+
+
+
+];
+
+
+
+
+
+
+
+
+return (
+
+
+
+<div
+
+className="
+min-h-screen
+space-y-8
+rounded-3xl
+bg-muted/30
+p-6
+"
+
+>
+
+
+
+
+
+
+
+{/* HEADER */}
+
+
+
+<FadeIn>
+
+
+<div>
+
+
+<h1
+
+className="
+text-3xl
+font-bold
+"
+
+>
+
+Dashboard
+
+</h1>
+
+
+
+<p
+
+className="
+text-muted-foreground
+"
+
+>
+
+SmartPOS overview and analytics
+
+</p>
+
+
+</div>
+
+
+</FadeIn>
+
+
+
+
+
+
+
+
+
+{/* STATS */}
+
+
+
+<div
+
+className="
+grid
+gap-6
+md:grid-cols-2
+xl:grid-cols-4
+"
+
+>
+
+
+{
+stats.map(
+(item,index)=>(
+
+
+<FadeIn
+
+key={item.title}
+
+delay={index*0.1}
+
+>
+
+
+<StatsCard
+
+title={item.title}
+
+value={item.value}
+
+icon={item.icon}
+
+description={item.description}
+
+/>
+
+
+</FadeIn>
+
+
+)
+
+)
+
+
+}
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+{/* SALES OVERVIEW */}
+
+
+
+<FadeIn delay={0.4}>
+
+
+<SalesOverview />
+
+
+</FadeIn>
+
+
+
+
+
+
+
+
+
+{/* RECENT SALES + LOW STOCK */}
+
+
+
+<div
+
+className="
+grid
+gap-6
+lg:grid-cols-2
+"
+
+>
+
+
+
+<FadeIn delay={0.5}>
+
+
+<RecentSales />
+
+
+</FadeIn>
+
+
+
+
+
+
+
+<FadeIn delay={0.6}>
+
+
+<LowStock
+
+products={products}
+
+/>
+
+
+</FadeIn>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+{/* TOP PRODUCTS */}
+
+
+
+<FadeIn delay={0.7}>
+
+
+<TopProducts />
+
+
+</FadeIn>
+
+
+
+
+
+
+
+</div>
+
+
+
+);
+
 
 }

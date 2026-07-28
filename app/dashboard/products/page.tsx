@@ -1,16 +1,12 @@
+// ===============================
+// IMPORTS
+// ===============================
+
 import Link from "next/link";
+
 import {
   Plus,
-  Search,
 } from "lucide-react";
-
-
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 
 import {
@@ -18,50 +14,42 @@ import {
 } from "@/components/ui/button";
 
 
-import {
-  Input,
-} from "@/components/ui/input";
+import ProductTable from "@/components/products/product-table";
 
 
 
-async function getProducts() {
-
-  try {
-
-    const res = await fetch(
-      "http://localhost:3000/api/products",
-      {
-        cache: "no-store",
-      }
-    );
 
 
-    const data = await res.json();
+// ===============================
+// TYPES
+// ===============================
 
 
-    if(data.success){
-
-      return data.products;
-
-    }
+interface Product {
 
 
-    return [];
+  _id:string;
 
+  name:string;
 
-  } catch(error){
+  barcode:string;
 
+  sku:string;
 
-    console.log(
-      "Product fetch error:",
-      error
-    );
+  category:string;
 
+  brand:string;
 
-    return [];
+  supplier:string;
 
+  costPrice:number;
 
-  }
+  sellingPrice:number;
+
+  stock:number;
+
+  status:string;
+
 
 }
 
@@ -70,10 +58,133 @@ async function getProducts() {
 
 
 
+
+// ===============================
+// CONSTANTS
+// ===============================
+
+
+const API_URL =
+process.env.NEXT_PUBLIC_API_URL ??
+"http://localhost:3000";
+
+
+
+
+
+
+
+
+// ===============================
+// API SERVICE
+// ===============================
+
+
+async function getProducts():Promise<Product[]> {
+
+
+  try {
+
+
+
+    const response = await fetch(
+
+      `${API_URL}/api/products`,
+
+      {
+        cache:"no-store",
+      }
+
+    );
+
+
+
+
+
+
+    if(!response.ok){
+
+
+      throw new Error(
+        "Failed to fetch products"
+      );
+
+
+    }
+
+
+
+
+
+
+
+    const data = await response.json();
+
+
+
+
+
+
+    if(!data.success){
+
+
+      return [];
+
+    }
+
+
+
+
+
+
+    return data.products || [];
+
+
+
+
+
+
+
+  } catch(error){
+
+
+
+    console.error(
+      "GET PRODUCTS ERROR:",
+      error
+    );
+
+
+
+    return [];
+
+
+
+  }
+
+
+}
+
+
+
+
+
+
+
+
+
+// ===============================
+// PAGE COMPONENT
+// ===============================
+
+
 export default async function ProductsPage(){
 
 
-  const products = await getProducts();
+
+  const products =
+  await getProducts();
+
 
 
 
@@ -81,51 +192,89 @@ export default async function ProductsPage(){
 
   return (
 
-    <div
+
+
+    <main
+
+
       className="
-        min-h-screen
-        space-y-6
-        rounded-3xl
-        bg-muted/30
-        p-6
+      min-h-screen
+      space-y-6
+      rounded-3xl
+      bg-muted/30
+      p-6
       "
+
     >
 
 
 
 
 
-      {/* Header */}
 
 
-      <div
+      {/* ===============================
+          PAGE HEADER
+      =============================== */}
+
+
+
+
+
+      <section
+
+
         className="
-          flex
-          items-center
-          justify-between
+        flex
+        items-center
+        justify-between
         "
+
+
       >
+
+
+
 
 
         <div>
 
+
           <h1
+
+
             className="
-              text-3xl
-              font-bold
+            text-3xl
+            font-bold
+            tracking-tight
             "
+
           >
+
             Products
+
+
           </h1>
 
 
+
+
+
           <p
+
+
             className="
-              text-muted-foreground
+            text-muted-foreground
             "
+
           >
-            Manage your inventory products
+
+            Manage your inventory products and stock
+
+
           </p>
+
+
 
 
         </div>
@@ -134,329 +283,110 @@ export default async function ProductsPage(){
 
 
 
-        <Link href="/dashboard/products/add">
+
+
+
+
+        {/* CREATE PRODUCT BUTTON */}
+
+
+
+
+        <Link
+
+
+          href="/dashboard/products/add"
+
+
+        >
+
 
 
           <Button
+
+
             className="
-              rounded-xl
+            rounded-xl
             "
+
+
           >
 
+
+
             <Plus
+
+
               className="
-                mr-2
-                h-4
-                w-4
+              mr-2
+              h-4
+              w-4
               "
+
+
             />
+
+
 
             Add Product
 
+
+
           </Button>
+
+
 
 
         </Link>
 
 
 
-      </div>
 
 
 
 
+      </section>
 
 
 
 
 
-      {/* Search */}
 
 
-      <Card
-        className="
-          rounded-2xl
-        "
-      >
 
-        <CardContent
-          className="
-            p-4
-          "
-        >
 
-          <div
-            className="
-              flex
-              items-center
-              gap-3
-              rounded-xl
-              border
-              px-4
-            "
-          >
 
-            <Search
-              className="
-                h-5
-                w-5
-                text-muted-foreground
-              "
-            />
 
 
-            <Input
 
-              placeholder="Search products..."
+      {/* ===============================
+          PRODUCT TABLE
+      =============================== */}
 
-              className="
-                border-0
-                focus-visible:ring-0
-              "
 
-            />
 
 
-          </div>
 
+      <section>
 
-        </CardContent>
 
+        <ProductTable
 
-      </Card>
+          products={products}
 
+        />
 
 
+      </section>
 
 
 
 
 
 
-      {/* Products Table */}
 
 
-
-      <Card
-        className="
-          rounded-2xl
-        "
-      >
-
-
-        <CardHeader>
-
-          <CardTitle>
-
-            All Products ({products.length})
-
-          </CardTitle>
-
-        </CardHeader>
-
-
-
-
-
-        <CardContent>
-
-
-          <div
-            className="
-              overflow-x-auto
-            "
-          >
-
-
-            <table
-              className="
-                w-full
-                text-sm
-              "
-            >
-
-
-              <thead>
-
-
-                <tr
-                  className="
-                    border-b
-                    text-left
-                    text-muted-foreground
-                  "
-                >
-
-                  <th className="p-3">
-                    Name
-                  </th>
-
-
-                  <th className="p-3">
-                    Category
-                  </th>
-
-
-                  <th className="p-3">
-                    Price
-                  </th>
-
-
-                  <th className="p-3">
-                    Stock
-                  </th>
-
-
-                  <th className="p-3">
-                    Status
-                  </th>
-
-
-                </tr>
-
-
-              </thead>
-
-
-
-
-
-
-
-              <tbody>
-
-
-                {products.length === 0 ? (
-
-
-                  <tr>
-
-                    <td
-                      colSpan={5}
-                      className="
-                        p-6
-                        text-center
-                        text-muted-foreground
-                      "
-                    >
-
-                      No products found.
-
-                    </td>
-
-
-                  </tr>
-
-
-
-                ) : (
-
-
-                  products.map((product:any)=>(
-
-
-                    <tr
-                      key={product._id}
-                      className="
-                        border-b
-                        hover:bg-muted/50
-                      "
-                    >
-
-
-                      <td className="p-3 font-medium">
-
-                        {product.name}
-
-                      </td>
-
-
-
-                      <td className="p-3">
-
-                        {product.category}
-
-                      </td>
-
-
-
-
-                      <td className="p-3">
-
-                        £{product.sellingPrice}
-
-                      </td>
-
-
-
-
-
-                      <td className="p-3">
-
-                        {product.stock}
-
-                      </td>
-
-
-
-
-
-                      <td className="p-3">
-
-
-                        <span
-                          className="
-                            rounded-full
-                            bg-green-500/10
-                            px-3
-                            py-1
-                            text-xs
-                            text-green-600
-                          "
-                        >
-
-                          {product.status}
-
-                        </span>
-
-
-                      </td>
-
-
-
-                    </tr>
-
-
-                  ))
-
-
-                )}
-
-
-              </tbody>
-
-
-
-            </table>
-
-
-
-          </div>
-
-
-
-        </CardContent>
-
-
-
-      </Card>
-
-
-
-
-
-
-    </div>
+    </main>
 
 
   );
