@@ -70,6 +70,8 @@ export async function GET(){
 
 
 
+
+
 // ===============================
 // CREATE SALE
 // ===============================
@@ -104,10 +106,15 @@ products,
 
 totalAmount,
 
+cashReceived,
+
+change,
+
 paymentMethod
 
 
 }=body;
+
 
 
 
@@ -152,6 +159,7 @@ status:404
 
 
 
+
 if(product.stock < item.quantity){
 
 
@@ -173,6 +181,7 @@ status:400
 
 
 }
+
 
 
 
@@ -215,6 +224,7 @@ stock:-item.quantity
 
 
 
+
 // ===============================
 // SAVE SALE
 // ===============================
@@ -232,10 +242,15 @@ products,
 
 totalAmount,
 
+cashReceived,
+
+change,
+
 paymentMethod
 
 
 });
+
 
 
 
@@ -256,6 +271,7 @@ sale
 {
 status:201
 });
+
 
 
 

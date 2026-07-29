@@ -180,7 +180,7 @@ description:"Need restocking"
 
 title:"Inventory Value",
 
-value:`£${inventoryValue.toLocaleString()}`,
+value:`LKR${inventoryValue.toLocaleString()}`,
 
 icon:Wallet,
 

@@ -1,7 +1,6 @@
 import mongoose, { Schema, models } from "mongoose";
 
 
-
 const SaleSchema = new Schema(
 
 {
@@ -66,6 +65,20 @@ const SaleSchema = new Schema(
 
 
 
+  cashReceived:{
+    type:Number,
+    default:0,
+  },
+
+
+
+  change:{
+    type:Number,
+    default:0,
+  },
+
+
+
   paymentMethod:{
     type:String,
     enum:[
@@ -75,6 +88,7 @@ const SaleSchema = new Schema(
     ],
     default:"Cash",
   },
+
 
 
   status:{

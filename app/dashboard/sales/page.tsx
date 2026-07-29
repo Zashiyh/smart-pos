@@ -195,20 +195,37 @@ const change = useMemo(()=>{
       setMessage("");
 
       const body = {
-  invoiceNumber: `INV-${Date.now()}`,
-  customerName,
-  paymentMethod,
-  totalAmount: grandTotal,
 
-        products: cart.map((item) => ({
-          product: item.productId,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price,
-          subtotal:
-            item.price * item.quantity,
-        })),
-      };
+invoiceNumber:`INV-${Date.now()}`,
+
+customerName,
+
+paymentMethod,
+
+totalAmount: grandTotal,
+
+cashReceived,
+
+change:
+cashReceived - grandTotal,
+
+
+products: cart.map((item)=>({
+
+product:item.productId,
+
+name:item.name,
+
+quantity:item.quantity,
+
+price:item.price,
+
+subtotal:
+item.price * item.quantity,
+
+}))
+
+};
 
       const res = await fetch("/api/sales", {
         method: "POST",
@@ -400,7 +417,7 @@ const change = useMemo(()=>{
                           "
                         >
 
-                          £{product.sellingPrice}
+                         LKR {product.sellingPrice.toLocaleString()}
 
                         </p>
 
@@ -552,7 +569,7 @@ const change = useMemo(()=>{
                           "
                         >
 
-                          £{item.price}
+                          LKR{item.price}
 
                         </p>
 
@@ -673,7 +690,7 @@ const change = useMemo(()=>{
 
                       Subtotal:
                       {" "}
-                      £
+                      LKR
                       {
                         item.price *
                         item.quantity
@@ -781,8 +798,64 @@ const change = useMemo(()=>{
 >
   Total:
   {" "}
-  £{grandTotal}
+  LKR{grandTotal}
 </h2>
+
+<div className="space-y-3">
+
+
+<Input
+
+type="number"
+
+placeholder="Cash Received"
+
+value={cashReceived}
+
+onChange={(e)=>
+setCashReceived(
+Number(e.target.value)
+)
+}
+
+/>
+
+
+
+<div
+className="
+flex
+justify-between
+rounded-xl
+border
+p-3
+"
+>
+
+<span>
+Change
+</span>
+
+
+<span className="font-bold">
+
+LKR
+{
+cashReceived > grandTotal
+?
+(cashReceived - grandTotal).toFixed(2)
+:
+"0.00"
+}
+
+</span>
+
+
+</div>
+
+
+
+</div>
 
 <Input
 
@@ -805,7 +878,7 @@ onChange={(e)=>
 
 Change:
 {" "}
-£{change}
+LKR{change}
 
 </p>
 

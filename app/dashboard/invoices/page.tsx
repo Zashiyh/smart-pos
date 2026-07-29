@@ -487,7 +487,7 @@ hover:bg-muted/50
 <td className="p-3">
 
 
-£{sale.totalAmount}
+LKR{sale.totalAmount}
 
 
 </td>
@@ -595,6 +595,7 @@ w-4
 
 
 </Button>
+
 
 
 </Link>

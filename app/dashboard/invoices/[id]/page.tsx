@@ -425,7 +425,7 @@ className="border-b"
 
 <td className="p-3 text-center">
 
-£{item.price}
+LKR{item.price}
 
 </td>
 
@@ -434,7 +434,7 @@ className="border-b"
 
 <td className="p-3 text-center">
 
-£{item.subtotal}
+LKR{item.subtotal}
 
 </td>
 
@@ -494,7 +494,48 @@ Subtotal
 
 <span>
 
-£{invoice.totalAmount}
+LKR{invoice.totalAmount}
+
+</span>
+
+
+</div>
+
+<div className="flex justify-between">
+
+
+<span>
+
+Cash Received
+
+</span>
+
+
+<span className="font-semibold">
+
+LKR{invoice.cashReceived ?? 0}
+
+</span>
+
+
+</div>
+
+
+
+
+<div className="flex justify-between">
+
+
+<span>
+
+Change
+
+</span>
+
+
+<span className="font-semibold">
+
+LKR{invoice.change ?? 0}
 
 </span>
 
@@ -575,7 +616,7 @@ Total
 
 <span>
 
-£{invoice.totalAmount}
+LKR{invoice.totalAmount}
 
 </span>
 
