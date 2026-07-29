@@ -1,8 +1,7 @@
 "use client";
 
-
-import { useEffect, useState } from "react";
-
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import {
   Card,
@@ -11,1017 +10,867 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-
-import {
-  Input,
-} from "@/components/ui/input";
-
-
-import {
-  Button,
-} from "@/components/ui/button";
-
-
-
-
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface Product {
-
-
-  _id:string;
-
-  name:string;
-
-  sellingPrice:number;
-
-  stock:number;
-
-
+  _id: string;
+  name: string;
+  sellingPrice: number;
+  stock: number;
 }
-
-
-
-
-
-
 
 interface CartItem {
-
-
-  productId:string;
-
-  name:string;
-
-  price:number;
-
-  quantity:number;
-
-
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
 }
 
+export default function SalesPage() {
+  const router = useRouter();
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [search, setSearch] = useState("");
+  const [cart, setCart] = useState<CartItem[]>([]);
+
+  const [customerName, setCustomerName] =
+    useState("Walk-in Customer");
+  
+  const [cashReceived,setCashReceived] =
+  useState(0);  
+
+  const [paymentMethod, setPaymentMethod] =
+    useState("Cash");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [message, setMessage] =
+    useState("");
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  async function loadProducts() {
+    const res = await fetch("/api/products");
+
+    const data = await res.json();
+
+    if (data.success) {
+      setProducts(data.products);
+    }
+  }
+
+  function addToCart(product: Product) {
+    const existing = cart.find(
+      (item) => item.productId === product._id
+    );
+
+    if (existing) {
+      setCart(
+        cart.map((item) =>
+          item.productId === product._id
+            ? {
+                ...item,
+                quantity: item.quantity + 1,
+              }
+            : item
+        )
+      );
+
+      return;
+    }
+
+    setCart([
+      ...cart,
+      {
+        productId: product._id,
+        name: product.name,
+        price: product.sellingPrice,
+        quantity: 1,
+      },
+    ]);
+  }
+
+  function increase(id: string) {
+    setCart(
+      cart.map((item) =>
+        item.productId === id
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
+          : item
+      )
+    );
+  }
+
+  function decrease(id: string) {
+    setCart(
+      cart
+        .map((item) =>
+          item.productId === id
+            ? {
+                ...item,
+                quantity: item.quantity - 1,
+              }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  }
+
+  function removeItem(id: string) {
+    setCart(
+      cart.filter(
+        (item) => item.productId !== id
+      )
+    );
+  }
 
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) =>
+      product.name
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
+  }, [products, search]);
 
+  const subtotal = useMemo(() => {
 
+  return cart.reduce(
+    (sum, item) =>
+      sum + item.price * item.quantity,
+    0
+  );
 
+}, [cart]);
 
 
 
+const [discount,setDiscount] = useState(0);
 
-export default function SalesPage(){
 
+const [tax,setTax] = useState(5);
 
 
-const [products,setProducts] =
-useState<Product[]>([]);
 
+const taxAmount = useMemo(()=>{
 
+  return (subtotal * tax) / 100;
 
-const [search,setSearch] =
-useState("");
+},[subtotal,tax]);
 
 
 
-const [cart,setCart] =
-useState<CartItem[]>([]);
+const grandTotal = useMemo(()=>{
 
+  return subtotal - discount + taxAmount;
 
-
-const [loading,setLoading] =
-useState(false);
-
-
-
-const [message,setMessage] =
-useState("");
-
-
-
-
-
-
-
-
-
-
-// ===============================
-// LOAD PRODUCTS
-// ===============================
-
-
-useEffect(()=>{
-
-
-async function loadProducts(){
-
-
-const res =
-await fetch("/api/products");
-
-
-const data =
-await res.json();
-
-
-
-if(data.success){
-
-
-setProducts(
-data.products
-);
-
-
-}
-
-
-}
-
-
-
-loadProducts();
-
-
-
-},[]);
-
-
-
-
-
-
-
-
-
-
-
-
-// ===============================
-// ADD TO CART
-// ===============================
-
-
-function addToCart(product:Product){
-
-
-
-const existing =
-cart.find(
-
-(item)=>
-
-item.productId === product._id
-
-);
-
-
-
-
-
-if(existing){
-
-
-
-setCart(
-
-cart.map(item=>
-
-item.productId === product._id
-
-?
-
-{
-
-...item,
-
-quantity:item.quantity + 1
-
-}
-
-:
-
-item
-
-)
-
-);
-
-
-
-}
-
-else{
-
-
-
-setCart([
-
-...cart,
-
-{
-
-productId:product._id,
-
-name:product.name,
-
-price:product.sellingPrice,
-
-quantity:1
-
-}
-
-
+},[
+  subtotal,
+  discount,
+  taxAmount
 ]);
 
+const change = useMemo(()=>{
+
+  return cashReceived - grandTotal;
+
+},[
+  cashReceived,
+  grandTotal
+]);
+
+  async function handleCompleteSale() {
+    if (cart.length === 0) {
+      setMessage("Cart is empty");
+      return;
+    }
 
+    try {
+      setLoading(true);
+      setMessage("");
+
+      const body = {
+  invoiceNumber: `INV-${Date.now()}`,
+  customerName,
+  paymentMethod,
+  totalAmount: grandTotal,
 
-}
+        products: cart.map((item) => ({
+          product: item.productId,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          subtotal:
+            item.price * item.quantity,
+        })),
+      };
 
+      const res = await fetch("/api/sales", {
+        method: "POST",
 
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
 
-}
+        body: JSON.stringify(body),
+      });
 
+      const data = await res.json();
 
+      if (!data.success) {
+        throw new Error(data.message);
+      }
 
+      setCart([]);
 
+      await loadProducts();
 
+      router.push(
+        `/dashboard/invoices/${data.sale._id}`
+      );
+    } catch (error: any) {
+      setMessage(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }  return (
 
+    <div
+      className="
+      min-h-screen
+      space-y-6
+      rounded-3xl
+      bg-muted/30
+      p-6
+      "
+    >
 
 
+      <h1
+        className="
+        text-3xl
+        font-bold
+        "
+      >
+        Sales / POS
+      </h1>
 
 
 
-// ===============================
-// REMOVE CART ITEM
-// ===============================
+      {
+        message && (
 
+          <div
+            className="
+            rounded-xl
+            border
+            p-3
+            text-sm
+            "
+          >
 
-function removeItem(id:string){
+            {message}
 
+          </div>
 
-setCart(
+        )
+      }
 
-cart.filter(
 
-(item)=>
 
-item.productId !== id
 
-)
 
-);
+      <div
+        className="
+        grid
+        gap-6
+        lg:grid-cols-2
+        "
+      >
 
 
-}
 
 
+        {/* =========================
+            PRODUCTS
+        ========================== */}
 
 
+        <Card className="rounded-2xl">
 
 
+          <CardHeader>
 
+            <CardTitle>
+              Products
+            </CardTitle>
 
+          </CardHeader>
 
 
 
-// ===============================
-// COMPLETE SALE
-// ===============================
 
+          <CardContent>
 
-async function handleCompleteSale(){
 
+            <Input
 
+              placeholder="Search product..."
 
-if(cart.length === 0){
+              value={search}
 
+              onChange={(e)=>
+                setSearch(e.target.value)
+              }
 
-setMessage(
-"Cart is empty"
-);
+            />
 
 
-return;
 
 
-}
 
+            <div
+              className="
+              mt-5
+              space-y-3
+              "
+            >
 
 
+              {
+                filteredProducts.map(
+                  (product)=>(
 
-try{
 
+                    <div
 
-setLoading(true);
+                      key={product._id}
 
+                      className="
+                      flex
+                      items-center
+                      justify-between
+                      rounded-xl
+                      border
+                      p-3
+                      "
 
-setMessage("");
+                    >
 
 
+                      <div>
 
 
+                        <p
+                          className="
+                          font-medium
+                          "
+                        >
 
-const saleProducts =
+                          {product.name}
 
-cart.map(item=>(
+                        </p>
 
-{
 
 
-product:item.productId,
+                        <p
+                          className="
+                          text-sm
+                          text-muted-foreground
+                          "
+                        >
 
-name:item.name,
+                          Stock:
+                          {" "}
+                          {product.stock}
 
-quantity:item.quantity,
+                        </p>
 
-price:item.price,
 
-subtotal:
-item.price * item.quantity
 
+                        <p
+                          className="
+                          text-sm
+                          "
+                        >
 
-}
+                          £{product.sellingPrice}
 
+                        </p>
 
-));
 
 
+                      </div>
 
 
 
 
 
 
-const response =
+                      <Button
 
-await fetch(
+                        onClick={()=>
+                          addToCart(product)
+                        }
 
-"/api/sales",
+                      >
 
-{
+                        Add
 
+                      </Button>
 
-method:"POST",
 
 
-headers:{
 
 
-"Content-Type":"application/json"
+                    </div>
 
 
-},
+                  )
+                )
+              }
 
 
-body:JSON.stringify({
 
+            </div>
 
-invoiceNumber:
 
-"INV-" + Date.now(),
 
 
+          </CardContent>
 
-customerName:
 
-"Walk-in Customer",
 
+        </Card>
 
 
-products:saleProducts,
 
 
 
-totalAmount:total,
 
 
+        {/* =========================
+            CART
+        ========================== */}
 
-paymentMethod:"Cash"
 
+        <Card className="rounded-2xl">
 
 
-})
+          <CardHeader>
 
+            <CardTitle>
+              Cart
+            </CardTitle>
 
-}
+          </CardHeader>
 
 
-);
 
 
 
+          <CardContent
+            className="
+            space-y-5
+            "
+          >
 
 
 
+            {
+              cart.length === 0 ?
 
-const data =
-await response.json();
 
+              (
 
+                <p
+                  className="
+                  text-muted-foreground
+                  "
+                >
 
+                  Cart is empty
 
+                </p>
 
+              )
 
+              :
 
-if(!response.ok || !data.success){
 
+              cart.map(
+                (item)=>(
 
-throw new Error(
 
-data.message ||
+                  <div
 
-"Sale failed"
+                    key={item.productId}
 
-);
+                    className="
+                    rounded-xl
+                    border
+                    p-3
+                    space-y-3
+                    "
 
+                  >
 
-}
 
 
+                    <div
+                      className="
+                      flex
+                      justify-between
+                      "
+                    >
 
 
+                      <div>
 
 
+                        <p
+                          className="
+                          font-medium
+                          "
+                        >
 
+                          {item.name}
 
-setMessage(
+                        </p>
 
-"Sale completed successfully"
 
-);
 
+                        <p
+                          className="
+                          text-sm
+                          "
+                        >
 
+                          £{item.price}
 
+                        </p>
 
 
-setCart([]);
 
+                      </div>
 
 
 
 
-// refresh products stock
+                      <Button
 
+                        variant="destructive"
 
-const productResponse =
-await fetch("/api/products");
+                        size="sm"
 
+                        onClick={()=>
+                          removeItem(
+                            item.productId
+                          )
+                        }
 
+                      >
 
-const productData =
-await productResponse.json();
+                        Remove
 
+                      </Button>
 
 
-if(productData.success){
 
+                    </div>
 
-setProducts(
 
-productData.products
 
-);
 
 
-}
 
 
+                    <div
+                      className="
+                      flex
+                      items-center
+                      justify-between
+                      "
+                    >
 
 
+                      <Button
 
+                        variant="outline"
 
+                        size="sm"
 
-}catch(error:any){
+                        onClick={()=>
+                          decrease(
+                            item.productId
+                          )
+                        }
 
+                      >
 
+                        -
 
-setMessage(
+                      </Button>
 
-error.message
 
-);
 
 
 
-}
+                      <span
+                        className="
+                        font-bold
+                        "
+                      >
 
-finally{
+                        {item.quantity}
 
+                      </span>
 
-setLoading(false);
 
 
-}
 
 
 
-}
+                      <Button
 
+                        variant="outline"
 
+                        size="sm"
 
+                        onClick={()=>
+                          increase(
+                            item.productId
+                          )
+                        }
 
+                      >
 
+                        +
 
+                      </Button>
 
 
 
+                    </div>
 
 
 
 
-const filteredProducts =
 
-products.filter(
 
-(product)=>
+                    <p
+                      className="
+                      text-right
+                      font-semibold
+                      "
+                    >
 
-product.name
+                      Subtotal:
+                      {" "}
+                      £
+                      {
+                        item.price *
+                        item.quantity
+                      }
 
-.toLowerCase()
+                    </p>
 
-.includes(
 
-search.toLowerCase()
 
-)
 
+                  </div>
 
-);
 
+                )
 
+              )
 
+            }
 
 
 
 
 
 
-const total =
 
-cart.reduce(
+            <div
+              className="
+              border-t
+              pt-5
+              space-y-4
+              "
+            >
 
-(sum,item)=>
 
-sum +
 
-(item.price * item.quantity),
 
-0
+              <Input
 
-);
+                placeholder="Customer name"
 
+                value={customerName}
 
+                onChange={(e)=>
+                  setCustomerName(
+                    e.target.value
+                  )
+                }
 
+              />
 
 
 
 
 
 
-return (
 
+              <select
 
+                value={paymentMethod}
 
-<div
+                onChange={(e)=>
+                  setPaymentMethod(
+                    e.target.value
+                  )
+                }
 
-className="
-min-h-screen
-space-y-6
-rounded-3xl
-bg-muted/30
-p-6
-"
+                className="
+                w-full
+                rounded-xl
+                border
+                bg-background
+                p-2
+                "
 
+              >
+
+                <option value="Cash">
+                  Cash
+                </option>
+
+
+                <option value="Card">
+                  Card
+                </option>
+
+
+                <option value="Online">
+                  Online
+                </option>
+
+
+              </select>
+
+
+
+
+
+
+
+ <h2
+  className="
+  text-2xl
+  font-bold
+  "
 >
-
-
-
-<h1 className="text-3xl font-bold">
-
-Sales / POS
-
-</h1>
-
-
-
-
-
-
-
-
-<div
-
-className="
-grid
-gap-6
-lg:grid-cols-2
-"
-
->
-
-
-
-
-
-
-
-{/* PRODUCTS */}
-
-
-
-<Card className="rounded-2xl">
-
-
-<CardHeader>
-
-<CardTitle>
-
-Products
-
-</CardTitle>
-
-</CardHeader>
-
-
-
-
-
-
-<CardContent>
-
-
-
+  Total:
+  {" "}
+  £{grandTotal}
+</h2>
 
 <Input
 
-placeholder="Search product..."
+type="number"
 
-value={search}
+placeholder="Cash Received"
 
-onChange={
+value={cashReceived}
 
-(e)=>
-
-setSearch(e.target.value)
-
+onChange={(e)=>
+  setCashReceived(
+    Number(e.target.value)
+  )
 }
-
 
 />
 
 
+<p className="font-semibold">
 
-
-
-
-
-<div className="mt-5 space-y-3">
-
-
-
-{
-
-
-filteredProducts.map(product=>(
-
-
-
-<div
-
-key={product._id}
-
-className="
-flex
-items-center
-justify-between
-rounded-xl
-border
-p-3
-"
-
-
->
-
-
-<div>
-
-
-<p className="font-medium">
-
-{product.name}
+Change:
+{" "}
+£{change}
 
 </p>
 
 
 
-<p className="text-sm text-muted-foreground">
 
-Stock: {product.stock}
 
-</p>
 
+              <Button
 
-</div>
+                className="
+                w-full
+                rounded-xl
+                "
 
+                disabled={loading}
 
+                onClick={
+                  handleCompleteSale
+                }
 
+              >
 
+                {
+                  loading
+                  ?
+                  "Processing..."
+                  :
+                  "Complete Sale"
+                }
 
-<Button
 
-onClick={()=>addToCart(product)}
+              </Button>
 
->
 
-Add
 
-</Button>
 
 
+            </div>
 
 
 
-</div>
 
 
-))
+          </CardContent>
 
 
-}
 
 
+        </Card>
 
-</div>
 
 
 
 
 
-</CardContent>
 
+      </div>
 
-</Card>
 
 
 
+    </div>
 
 
-
-
-
-
-
-
-
-
-{/* CART */}
-
-
-
-<Card className="rounded-2xl">
-
-
-<CardHeader>
-
-<CardTitle>
-
-Cart
-
-</CardTitle>
-
-
-</CardHeader>
-
-
-
-
-
-
-
-<CardContent>
-
-
-
-<div className="space-y-3">
-
-
-
-{
-
-
-cart.length === 0 ?
-
-
-<p className="text-muted-foreground">
-
-Cart is empty
-
-</p>
-
-
-
-:
-
-
-cart.map(item=>(
-
-
-
-<div
-
-key={item.productId}
-
-className="
-flex
-justify-between
-border-b
-pb-3
-"
-
->
-
-
-<div>
-
-
-<p>
-
-{item.name}
-
-</p>
-
-
-
-<p className="text-sm">
-
-Qty: {item.quantity}
-
-</p>
-
-
-</div>
-
-
-
-
-
-<div className="text-right">
-
-
-<p>
-
-£{item.price * item.quantity}
-
-</p>
-
-
-
-<Button
-
-variant="destructive"
-
-size="sm"
-
-onClick={()=>removeItem(item.productId)}
-
->
-
-Remove
-
-</Button>
-
-
-</div>
-
-
-
-
-</div>
-
-
-))
-
-
-}
-
-
-
-</div>
-
-
-
-
-
-
-
-<div
-
-className="
-mt-6
-border-t
-pt-4
-"
-
->
-
-
-
-<h2 className="text-xl font-bold">
-
-Total: £{total}
-
-</h2>
-
-
-
-
-
-
-<Button
-
-
-disabled={loading}
-
-
-onClick={handleCompleteSale}
-
-
-className="
-mt-4
-w-full
-rounded-xl
-"
-
-
->
-
-
-{
-
-loading
-
-?
-
-"Processing..."
-
-:
-
-"Complete Sale"
-
-}
-
-
-
-</Button>
-
-
-
-
-
-
-{
-
-message &&
-
-<p className="mt-3 text-center text-sm">
-
-{message}
-
-</p>
-
-
-}
-
-
-
-</div>
-
-
-
-
-
-
-
-</CardContent>
-
-
-</Card>
-
-
-
-
-
-
-</div>
-
-
-
-
-
-</div>
-
-
-);
-
-
+  );
 
 }

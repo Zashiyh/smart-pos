@@ -128,3 +128,40 @@
     @apply font-sans;
   }
 }
+
+@media print {
+
+
+  body {
+    background:white !important;
+  }
+
+
+
+  .print-hidden {
+    display:none !important;
+  }
+
+
+
+  .invoice-container {
+
+    width:210mm;
+    min-height:297mm;
+
+    padding:20mm;
+
+    background:white;
+
+  }
+
+
+
+  .no-print {
+
+    display:none !important;
+
+  }
+
+
+}

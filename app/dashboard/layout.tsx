@@ -19,7 +19,11 @@ export default function DashboardLayout({
 
       {/* Sidebar */}
 
-      <Sidebar />
+      <div className="no-print">
+
+        <Sidebar />
+
+      </div>
 
 
 
@@ -30,7 +34,11 @@ export default function DashboardLayout({
 
         {/* Navbar */}
 
-        <Navbar />
+        <div className="no-print">
+
+          <Navbar />
+
+        </div>
 
 
 
