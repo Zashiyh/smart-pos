@@ -85,46 +85,44 @@ export default async function DashboardPage(){
 const products = await getProducts();
 
 
-
-
-
 const totalProducts = products.length;
 
 
-
 const totalStock = products.reduce(
-(total:any,product:any)=>
-total + Number(product.stock || 0),
-0
+  (total:any, product:any)=>
+    total + Number(product.stock || 0),
+  0
 );
-
-
 
 
 
 const lowStockProducts = products.filter(
-(product:any)=>
-product.stock <= product.minStock
+  (product:any)=>
+    product.stock <= product.minStock
 );
-
-
-
 
 
 
 const inventoryValue = products.reduce(
-(total:any,product:any)=>
-
-total +
-(
-Number(product.costPrice || 0)
-*
-Number(product.stock || 0)
-),
-
-0
-
+  (total:any, product:any)=>
+    total +
+    (
+      Number(product.costPrice || 0) *
+      Number(product.stock || 0)
+    ),
+  0
 );
+
+
+
+
+
+
+
+
+
+
+
 
 
 

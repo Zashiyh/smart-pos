@@ -1,9 +1,17 @@
 "use client";
 
+
+import {
+  useEffect,
+  useState,
+} from "react";
+
+
 import {
   Trophy,
   Package,
 } from "lucide-react";
+
 
 import {
   Card,
@@ -14,389 +22,634 @@ import {
 
 
 
-const products = [
-  {
-    rank: 1,
-    name: "iPhone 15",
-    sold: 120,
-    revenue: "LKR12,000",
-    progress: "90%",
-  },
-  {
-    rank: 2,
-    name: "Wireless Mouse",
-    sold: 95,
-    revenue: "LKR2,850",
-    progress: "70%",
-  },
-  {
-    rank: 3,
-    name: "Mechanical Keyboard",
-    sold: 80,
-    revenue: "LKR4,000",
-    progress: "60%",
-  },
-  {
-    rank: 4,
-    name: "Laptop Bag",
-    sold: 65,
-    revenue: "LKR1,950",
-    progress: "45%",
-  },
-];
 
 
+interface Product {
 
+  _id:string;
 
-export default function TopProducts() {
+  sold:number;
 
+  revenue:number;
 
-  return (
+}
 
-    <Card
-      className="
-        rounded-2xl
-        border
-        bg-card/80
-        backdrop-blur-xl
-        shadow-sm
-      "
-    >
 
 
-      <CardHeader>
 
 
-        <div
-          className="
-            flex
-            items-center
-            gap-3
-          "
-        >
 
-          <div
-            className="
-              flex
-              h-10
-              w-10
-              items-center
-              justify-center
-              rounded-xl
-              bg-yellow-500/10
-            "
-          >
 
-            <Trophy
-              className="
-                h-5
-                w-5
-                text-yellow-500
-              "
-            />
+export default function TopProducts(){
 
-          </div>
 
 
-          <div>
+const [products,setProducts] =
+useState<Product[]>([]);
 
-            <CardTitle>
-              Top Selling Products
-            </CardTitle>
 
+const [loading,setLoading] =
+useState(true);
 
-            <p
-              className="
-                text-sm
-                text-muted-foreground
-              "
-            >
-              Best performing products
-            </p>
 
-          </div>
 
 
-        </div>
 
 
-      </CardHeader>
 
+useEffect(()=>{
 
 
+async function getTopProducts(){
 
 
-      <CardContent>
+try{
 
 
-        <div
-          className="
-            space-y-5
-          "
-        >
+const response =
+await fetch(
+"/api/dashboard/top-products",
+{
+cache:"no-store"
+}
+);
 
 
 
-          {
-            products.map((product)=>(
+const data =
+await response.json();
 
 
-              <div
 
-                key={product.name}
 
-                className="
-                  group
-                  rounded-xl
-                  border
-                  p-4
-                  transition-all
-                  hover:bg-muted/40
-                  hover:shadow-md
-                "
+if(data.success){
 
-              >
 
+setProducts(
+data.products
+);
 
 
-                <div
-                  className="
-                    flex
-                    items-center
-                    justify-between
-                  "
-                >
+}
 
 
 
-                  <div
-                    className="
-                      flex
-                      items-center
-                      gap-3
-                    "
-                  >
+}catch(error){
 
 
+console.log(
+"Top products error:",
+error
+);
 
-                    {/* Rank */}
 
-                    <div
+}finally{
 
-                      className={`
 
-                        flex
-                        h-10
-                        w-10
-                        items-center
-                        justify-center
-                        rounded-full
-                        text-sm
-                        font-bold
+setLoading(false);
 
 
-                        ${
-                          product.rank === 1
+}
 
-                          ?
 
-                          "bg-yellow-500/20 text-yellow-600"
 
-                          :
+}
 
-                          product.rank === 2
 
-                          ?
 
-                          "bg-gray-400/20 text-gray-600"
+getTopProducts();
 
-                          :
 
-                          product.rank === 3
+},[]);
 
-                          ?
 
-                          "bg-orange-500/20 text-orange-600"
 
-                          :
 
-                          "bg-primary/10 text-primary"
 
-                        }
 
-                      `}
 
-                    >
 
-                      {product.rank}
+const maxSold =
+products[0]?.sold || 1;
 
-                    </div>
 
 
 
 
 
 
-                    {/* Product */}
 
-                    <div
-                      className="
-                        flex
-                        items-center
-                        gap-3
-                      "
-                    >
+return (
 
-                      <div
-                        className="
-                          flex
-                          h-10
-                          w-10
-                          items-center
-                          justify-center
-                          rounded-xl
-                          bg-primary/10
-                          text-primary
-                        "
-                      >
 
-                        <Package
-                          className="
-                            h-5
-                            w-5
-                          "
-                        />
+<Card
 
-                      </div>
+className="
+rounded-2xl
+border
+bg-card/80
+backdrop-blur-xl
+shadow-sm
+"
 
+>
 
 
+<CardHeader>
 
-                      <div>
 
-                        <p
-                          className="
-                            font-medium
-                          "
-                        >
-                          {product.name}
-                        </p>
 
+<div
 
-                        <p
-                          className="
-                            text-sm
-                            text-muted-foreground
-                          "
-                        >
-                          {product.sold} sold
-                        </p>
+className="
+flex
+items-center
+gap-3
+"
 
+>
 
-                      </div>
 
 
-                    </div>
+<div
 
+className="
+flex
+h-10
+w-10
+items-center
+justify-center
+rounded-xl
+bg-yellow-500/10
+"
 
+>
 
-                  </div>
 
+<Trophy
 
+className="
+h-5
+w-5
+text-yellow-500
+"
 
+/>
 
 
+</div>
 
-                  {/* Revenue */}
 
 
-                  <div
-                    className="
-                      text-right
-                    "
-                  >
 
-                    <p
-                      className="
-                        font-bold
-                      "
-                    >
-                      {product.revenue}
-                    </p>
 
+<div>
 
-                    <p
-                      className="
-                        text-xs
-                        text-muted-foreground
-                      "
-                    >
-                      Revenue
-                    </p>
 
+<CardTitle>
 
-                  </div>
+Top Selling Products
 
+</CardTitle>
 
 
-                </div>
+<p
 
+className="
+text-sm
+text-muted-foreground
+"
 
+>
 
+Best performing products
 
+</p>
 
 
+</div>
 
-                {/* Progress */}
 
-                <div
-                  className="
-                    mt-4
-                    h-2
-                    overflow-hidden
-                    rounded-full
-                    bg-muted
-                  "
-                >
 
+</div>
 
-                  <div
 
-                    className="
-                      h-full
-                      rounded-full
-                      bg-primary
-                      transition-all
-                      duration-700
-                    "
 
-                    style={{
-                      width: product.progress,
-                    }}
+</CardHeader>
 
-                  />
 
 
-                </div>
 
 
 
-              </div>
 
 
-            ))
-          }
 
+<CardContent>
 
 
-        </div>
 
+<div
 
-      </CardContent>
+className="
+space-y-5
+"
 
+>
 
-    </Card>
 
-  );
+
+
+
+{
+
+loading ?
+
+
+
+<p className="text-muted-foreground">
+
+Loading products...
+
+</p>
+
+
+
+
+
+:
+
+
+
+products.length === 0 ?
+
+
+
+<p className="text-muted-foreground">
+
+No sales data available
+
+</p>
+
+
+
+
+
+
+:
+
+
+
+products.map(
+
+(product,index)=>(
+
+
+
+<div
+
+key={product._id}
+
+className="
+rounded-xl
+border
+p-4
+transition
+hover:bg-muted/40
+hover:shadow-md
+"
+
+>
+
+
+
+
+
+<div
+
+className="
+flex
+items-center
+justify-between
+"
+
+>
+
+
+
+
+
+<div
+
+className="
+flex
+items-center
+gap-3
+"
+
+>
+
+
+
+{/* Rank */}
+
+
+<div
+
+
+className={`
+
+flex
+h-10
+w-10
+items-center
+justify-center
+rounded-full
+text-sm
+font-bold
+
+
+${
+index === 0
+
+?
+
+"bg-yellow-500/20 text-yellow-600"
+
+:
+
+index === 1
+
+?
+
+"bg-gray-400/20 text-gray-600"
+
+:
+
+index === 2
+
+?
+
+"bg-orange-500/20 text-orange-600"
+
+:
+
+"bg-primary/10 text-primary"
+
+}
+
+`}
+
+
+>
+
+
+{index + 1}
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+{/* Product */}
+
+
+
+<div
+
+className="
+flex
+items-center
+gap-3
+"
+
+>
+
+
+
+<div
+
+className="
+flex
+h-10
+w-10
+items-center
+justify-center
+rounded-xl
+bg-primary/10
+"
+
+>
+
+
+<Package
+
+className="
+h-5
+w-5
+"
+
+/>
+
+
+</div>
+
+
+
+
+
+
+<div>
+
+
+<p
+
+className="
+font-medium
+"
+
+>
+
+{product._id}
+
+</p>
+
+
+
+<p
+
+className="
+text-sm
+text-muted-foreground
+"
+
+>
+
+{product.sold} sold
+
+</p>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+{/* Revenue */}
+
+
+<div
+
+className="
+text-right
+"
+
+>
+
+
+<p
+
+className="
+font-bold
+"
+
+>
+
+LKR {product.revenue.toLocaleString("en-LK")}
+
+</p>
+
+
+<p
+
+className="
+text-xs
+text-muted-foreground
+"
+
+>
+
+Revenue
+
+</p>
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+{/* Progress Bar */}
+
+
+
+<div
+
+className="
+mt-4
+h-2
+overflow-hidden
+rounded-full
+bg-muted
+"
+
+>
+
+
+<div
+
+
+className="
+h-full
+rounded-full
+bg-primary
+transition-all
+duration-700
+"
+
+style={{
+
+width:`${
+(product.sold / maxSold) * 100
+}%`
+
+}}
+
+
+/>
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+)
+
+)
+
+
+
+}
+
+
+
+
+</div>
+
+
+
+</CardContent>
+
+
+
+</Card>
+
+
+);
+
 
 }

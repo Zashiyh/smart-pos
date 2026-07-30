@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import {
   Card,
   CardContent,
@@ -23,349 +25,484 @@ import {
 
 
 
-const sales = [
-  {
-    invoice: "#INV001",
-    customer: "John Smith",
-    amount: "LKR250",
-    payment: "Cash",
-    status: "Paid",
-  },
-  {
-    invoice: "#INV002",
-    customer: "David Wilson",
-    amount: "LKR430",
-    payment: "Card",
-    status: "Paid",
-  },
-  {
-    invoice: "#INV003",
-    customer: "Sarah Brown",
-    amount: "LKR180",
-    payment: "Cash",
-    status: "Pending",
-  },
-  {
-    invoice: "#INV004",
-    customer: "Michael Lee",
-    amount: "LKR620",
-    payment: "Card",
-    status: "Paid",
-  },
-];
+interface Sale {
 
+  _id:string;
 
+  invoiceNumber:string;
 
-export default function RecentSales() {
+  customerName:string;
 
+  totalAmount:number;
 
-  return (
+  paymentMethod:string;
 
-    <Card
-      className="
-        rounded-2xl
-        border
-        bg-card/80
-        backdrop-blur-xl
-        shadow-sm
-      "
-    >
+  status:string;
 
+}
 
-      <CardHeader>
 
-        <div
-          className="
-            flex
-            items-center
-            justify-between
-          "
-        >
 
-          <div>
 
-            <CardTitle
-              className="
-                text-xl
-                font-semibold
-              "
-            >
-              Recent Sales
-            </CardTitle>
 
+export default function RecentSales(){
 
-            <p
-              className="
-                mt-1
-                text-sm
-                text-muted-foreground
-              "
-            >
-              Latest customer transactions
-            </p>
 
-          </div>
 
+const [sales,setSales] = useState<Sale[]>([]);
 
-        </div>
+const [loading,setLoading] = useState(true);
 
 
-      </CardHeader>
 
 
 
 
+useEffect(()=>{
 
-      <CardContent>
 
+async function getSales(){
 
-        <div
-          className="
-            overflow-x-auto
-          "
-        >
 
-          <Table>
+try{
 
 
-            <TableHeader>
+const res = await fetch(
+"/api/sales"
+);
 
 
-              <TableRow
-                className="
-                  hover:bg-transparent
-                "
-              >
+const data = await res.json();
 
-                <TableHead>
-                  Invoice
-                </TableHead>
 
 
-                <TableHead>
-                  Customer
-                </TableHead>
+if(data.success){
 
 
-                <TableHead>
-                  Amount
-                </TableHead>
+setSales(
+data.sales.slice(0,5)
+);
 
 
-                <TableHead>
-                  Payment
-                </TableHead>
+}
 
 
-                <TableHead>
-                  Status
-                </TableHead>
 
+}catch(error){
 
-              </TableRow>
 
+console.log(
+"Recent sales error:",
+error
+);
 
-            </TableHeader>
 
+}finally{
 
 
+setLoading(false);
 
 
-            <TableBody>
+}
 
 
-              {
-                sales.map((sale)=>(
+}
 
 
-                  <TableRow
-                    key={sale.invoice}
-                    className="
-                      transition
-                      hover:bg-muted/50
-                    "
-                  >
 
+getSales();
 
-                    <TableCell
-                      className="
-                        font-medium
-                      "
-                    >
-                      {sale.invoice}
-                    </TableCell>
 
+},[]);
 
 
 
 
-                    <TableCell>
 
 
-                      <div
-                        className="
-                          flex
-                          items-center
-                          gap-3
-                        "
-                      >
 
 
-                        <div
-                          className="
-                            flex
-                            h-9
-                            w-9
-                            items-center
-                            justify-center
-                            rounded-full
-                            bg-primary/10
-                            text-sm
-                            font-semibold
-                            text-primary
-                          "
-                        >
+return (
 
-                          {
-                            sale.customer
-                              .charAt(0)
-                          }
+<Card
 
-                        </div>
+className="
+rounded-2xl
+border
+bg-card/80
+backdrop-blur-xl
+shadow-sm
+"
 
+>
 
 
-                        <span>
-                          {sale.customer}
-                        </span>
+<CardHeader>
 
 
-                      </div>
+<CardTitle
 
+className="
+text-xl
+font-semibold
+"
 
-                    </TableCell>
+>
 
+Recent Sales
 
+</CardTitle>
 
 
 
-                    <TableCell
-                      className="
-                        font-semibold
-                      "
-                    >
-                      {sale.amount}
-                    </TableCell>
+<p
 
+className="
+text-sm
+text-muted-foreground
+"
 
+>
 
+Latest customer transactions
 
+</p>
 
-                    <TableCell>
 
+</CardHeader>
 
-                      <div
-                        className="
-                          flex
-                          items-center
-                          gap-2
-                        "
-                      >
 
-                        {
-                          sale.payment === "Card"
-                          ?
 
-                          <CreditCard
-                            className="
-                              h-4
-                              w-4
-                              text-blue-500
-                            "
-                          />
 
-                          :
 
-                          <Banknote
-                            className="
-                              h-4
-                              w-4
-                              text-green-500
-                            "
-                          />
 
-                        }
 
 
-                        {sale.payment}
+<CardContent>
 
 
-                      </div>
+<div className="overflow-x-auto">
 
 
-                    </TableCell>
+<Table>
 
 
+<TableHeader>
 
 
+<TableRow>
 
 
-                    <TableCell>
+<TableHead>
+Invoice
+</TableHead>
 
 
-                      <span
-                        className={`
-                          rounded-full
-                          px-3
-                          py-1
-                          text-xs
-                          font-medium
+<TableHead>
+Customer
+</TableHead>
 
-                          ${
-                            sale.status === "Paid"
 
-                            ?
+<TableHead>
+Amount
+</TableHead>
 
-                            "bg-green-500/10 text-green-600"
 
-                            :
+<TableHead>
+Payment
+</TableHead>
 
-                            "bg-yellow-500/10 text-yellow-600"
 
-                          }
-                        `}
-                      >
+<TableHead>
+Status
+</TableHead>
 
-                        {sale.status}
 
-                      </span>
+</TableRow>
 
 
-                    </TableCell>
+</TableHeader>
 
 
 
 
-                  </TableRow>
 
 
-                ))
-              }
+<TableBody>
 
 
-            </TableBody>
 
+{
+loading ?
 
-          </Table>
 
+<TableRow>
 
-        </div>
+<TableCell
 
+colSpan={5}
 
-      </CardContent>
+className="text-center"
 
+>
 
-    </Card>
+Loading...
 
-  );
+</TableCell>
+
+
+</TableRow>
+
+
+
+:
+
+sales.length === 0 ?
+
+
+
+<TableRow>
+
+<TableCell
+
+colSpan={5}
+
+className="text-center"
+
+>
+
+No sales found
+
+</TableCell>
+
+
+</TableRow>
+
+
+
+:
+
+
+
+sales.map((sale)=>(
+
+
+<TableRow
+
+key={sale._id}
+
+className="
+hover:bg-muted/50
+"
+
+>
+
+
+
+<TableCell
+
+className="
+font-medium
+"
+
+>
+
+{sale.invoiceNumber}
+
+</TableCell>
+
+
+
+
+
+
+
+<TableCell>
+
+
+<div
+
+className="
+flex
+items-center
+gap-3
+"
+
+>
+
+
+<div
+
+className="
+flex
+h-9
+w-9
+items-center
+justify-center
+rounded-full
+bg-primary/10
+text-primary
+font-semibold
+"
+
+>
+
+{sale.customerName.charAt(0)}
+
+</div>
+
+
+
+{sale.customerName}
+
+
+</div>
+
+
+</TableCell>
+
+
+
+
+
+
+
+
+<TableCell
+
+className="
+font-semibold
+"
+
+>
+
+LKR {sale.totalAmount.toLocaleString("en-LK")}
+
+</TableCell>
+
+
+
+
+
+
+
+
+<TableCell>
+
+
+<div
+
+className="
+flex
+items-center
+gap-2
+"
+
+>
+
+
+{
+
+sale.paymentMethod === "Card"
+
+?
+
+<CreditCard className="h-4 w-4 text-blue-500"/>
+
+:
+
+<Banknote className="h-4 w-4 text-green-500"/>
+
+
+}
+
+
+
+{sale.paymentMethod}
+
+
+</div>
+
+
+</TableCell>
+
+
+
+
+
+
+
+<TableCell>
+
+
+<span
+
+className={`
+rounded-full
+px-3
+py-1
+text-xs
+font-medium
+
+${
+sale.status === "Completed"
+
+?
+
+"bg-green-500/10 text-green-600"
+
+:
+
+"bg-yellow-500/10 text-yellow-600"
+
+}
+
+`}
+
+>
+
+
+{sale.status}
+
+
+</span>
+
+
+</TableCell>
+
+
+
+
+
+
+</TableRow>
+
+
+))
+
+
+}
+
+
+
+</TableBody>
+
+
+
+</Table>
+
+
+</div>
+
+
+</CardContent>
+
+
+
+</Card>
+
+
+);
+
+
 }
