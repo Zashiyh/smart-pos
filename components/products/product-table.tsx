@@ -17,26 +17,39 @@ import {
 } from "@/components/ui/card";
 
 
+
 interface Product {
 
-  _id:string;
-  name:string;
-  barcode:string;
-  sku:string;
-  category:string;
-  brand:string;
-  stock:number;
-  sellingPrice:number;
+  _id: string;
+
+  name: string;
+
+  barcode?: string;
+
+  sku?: string;
+
+  category?: string;
+
+  brand?: string;
+
+  stock: number;
+
+  sellingPrice: number;
+
+  status?: string;
 
 }
+
 
 
 
 interface ProductTableProps {
 
-  products:Product[];
+  products: Product[];
 
 }
+
+
 
 
 
@@ -57,353 +70,425 @@ const categories = [
 
 
 
+
+
 export default function ProductTable({
 
-products
+  products,
 
-}:ProductTableProps){
+}: ProductTableProps) {
 
 
 
-const [search,setSearch] =
-useState("");
+  const [search,setSearch] =
+    useState("");
 
 
 
-const [category,setCategory] =
-useState("All");
+  const [category,setCategory] =
+    useState("All");
 
 
 
 
 
-const filteredProducts =
-products.filter((product)=>{
 
+  const filteredProducts =
+    products.filter((product)=>{
 
-const searchMatch =
-product.name
-.toLowerCase()
-.includes(
-search.toLowerCase()
-);
 
 
+      const searchMatch =
+        product.name
+        .toLowerCase()
+        .includes(
+          search.toLowerCase()
+        );
 
-const categoryMatch =
-category === "All" ||
-product.category === category;
 
 
 
-return searchMatch && categoryMatch;
+      const categoryMatch =
+        category === "All" ||
+        product.category === category;
 
 
 
-});
 
+      return (
+        searchMatch &&
+        categoryMatch
+      );
 
 
+    });
 
 
 
-return (
 
 
-<Card className="rounded-2xl">
 
 
-<CardContent className="p-6">
+  return (
 
 
+    <Card
+      className="
+      rounded-2xl
+      "
+    >
 
-{/* FILTERS */}
 
-<div
-className="
-mb-6
-flex
-flex-col
-gap-4
-md:flex-row
-"
->
+      <CardContent
+        className="
+        p-6
+        "
+      >
 
 
-<input
 
-placeholder="Search product..."
 
-value={search}
 
-onChange={(e)=>
-setSearch(e.target.value)
-}
+        <div
 
-className="
-h-10
-rounded-xl
-border
-bg-background
-px-4
-outline-none
-"
-/>
+          className="
+          mb-6
+          flex
+          flex-col
+          gap-4
+          md:flex-row
+          "
 
+        >
 
 
 
+          <input
 
-<select
 
-value={category}
+            placeholder="Search product..."
 
-onChange={(e)=>
-setCategory(e.target.value)
-}
 
-className="
-h-10
-rounded-xl
-border
-bg-background
-px-4
-"
+            value={search}
 
->
 
+            onChange={(e)=>
+              setSearch(e.target.value)
+            }
 
-{
-categories.map((cat)=>(
 
-<option
-key={cat}
-value={cat}
->
+            className="
+            h-10
+            rounded-xl
+            border
+            bg-background
+            px-4
+            outline-none
+            "
 
-{cat}
 
-</option>
+          />
 
 
-))
-}
 
 
 
-</select>
 
 
+          <select
 
-</div>
 
+            value={category}
 
 
+            onChange={(e)=>
+              setCategory(e.target.value)
+            }
 
 
+            className="
+            h-10
+            rounded-xl
+            border
+            bg-background
+            px-4
+            "
 
 
+          >
 
 
-<div className="overflow-x-auto">
+            {
+              categories.map((cat)=>(
 
 
-<Table>
+                <option
 
+                  key={cat}
 
-<TableHeader>
+                  value={cat}
 
+                >
 
-<TableRow>
+                  {cat}
 
 
-<TableHead>
-Product
-</TableHead>
+                </option>
 
 
-<TableHead>
-Category
-</TableHead>
+              ))
+            }
 
 
-<TableHead>
-Brand
-</TableHead>
 
+          </select>
 
-<TableHead>
-Stock
-</TableHead>
 
 
-<TableHead>
-Price
-</TableHead>
 
+        </div>
 
-</TableRow>
 
 
-</TableHeader>
 
 
 
 
 
-<TableBody>
 
+        <div className="overflow-x-auto">
 
-{
-filteredProducts.length === 0 ?
 
 
-<TableRow>
+          <Table>
 
 
-<TableCell
+            <TableHeader>
 
-colSpan={5}
 
-className="text-center"
+              <TableRow>
 
->
 
-No products found
+                <TableHead>
+                  Product
+                </TableHead>
 
-</TableCell>
 
+                <TableHead>
+                  Category
+                </TableHead>
 
-</TableRow>
 
+                <TableHead>
+                  Brand
+                </TableHead>
 
 
-:
+                <TableHead>
+                  Stock
+                </TableHead>
 
 
-filteredProducts.map((product)=>(
+                <TableHead>
+                  Price
+                </TableHead>
 
 
-<TableRow
+              </TableRow>
 
-key={product._id}
 
->
+            </TableHeader>
 
 
-<TableCell
 
-className="font-medium"
 
->
 
-{product.name}
 
-</TableCell>
 
+            <TableBody>
 
 
 
-<TableCell>
+              {
+                filteredProducts.length === 0 ?
 
-{product.category}
 
-</TableCell>
+                (
 
+                  <TableRow>
 
 
+                    <TableCell
 
+                      colSpan={5}
 
-<TableCell>
+                      className="
+                      text-center
+                      "
 
-{product.brand}
+                    >
 
-</TableCell>
+                      No products found
 
 
+                    </TableCell>
 
 
+                  </TableRow>
 
-<TableCell>
 
+                )
 
-<span
 
-className={`
-rounded-full
-px-3
-py-1
-text-xs
 
-${
-product.stock <= 10
+                :
 
-?
 
-"bg-red-500/10 text-red-600"
 
-:
+                filteredProducts.map((product)=>(
 
-"bg-green-500/10 text-green-600"
 
-}
 
-`}
+                  <TableRow
 
->
+                    key={product._id}
 
-{product.stock}
+                  >
 
-</span>
 
 
-</TableCell>
+                    <TableCell
 
+                      className="
+                      font-medium
+                      "
 
+                    >
 
+                      {product.name}
 
 
+                    </TableCell>
 
-<TableCell>
 
 
-LKR {product.sellingPrice.toLocaleString("en-LK")}
 
 
-</TableCell>
+                    <TableCell>
 
+                      {product.category || "-"}
 
 
+                    </TableCell>
 
-</TableRow>
 
 
-))
 
 
-}
+                    <TableCell>
 
+                      {product.brand || "-"}
 
 
-</TableBody>
+                    </TableCell>
 
 
 
-</Table>
 
 
-</div>
+                    <TableCell>
 
 
+                      <span
 
+                        className={`
+                        rounded-full
+                        px-3
+                        py-1
+                        text-xs
 
-</CardContent>
+                        ${
+                          product.stock <= 10
 
+                          ?
 
-</Card>
+                          "bg-red-500/10 text-red-600"
 
+                          :
 
-);
+                          "bg-green-500/10 text-green-600"
+
+                        }
+
+                        `}
+
+                      >
+
+                        {product.stock}
+
+
+                      </span>
+
+
+                    </TableCell>
+
+
+
+
+
+
+
+                    <TableCell>
+
+
+                      LKR{" "}
+
+                      {Number(
+                        product.sellingPrice
+                      ).toLocaleString("en-LK")}
+
+
+
+                    </TableCell>
+
+
+
+
+
+                  </TableRow>
+
+
+
+                ))
+
+
+              }
+
+
+
+
+            </TableBody>
+
+
+
+          </Table>
+
+
+
+
+        </div>
+
+
+
+
+      </CardContent>
+
+
+
+    </Card>
+
+
+  );
 
 
 }

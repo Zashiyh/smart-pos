@@ -12,7 +12,9 @@ import {
   Wallet,
 } from "lucide-react";
 
-
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:3000";
 
 
 // =================================
@@ -25,12 +27,12 @@ async function getProducts(){
   try{
 
 
-    const res = await fetch(
-      "http://localhost:3000/api/products",
-      {
-        cache:"no-store",
-      }
-    );
+   const res = await fetch(
+  `${API_URL}/api/products`,
+  {
+    cache:"no-store",
+  }
+);
 
 
 
