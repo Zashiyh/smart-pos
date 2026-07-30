@@ -1,39 +1,162 @@
 "use client";
 
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LucideIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+
+
 
 interface SidebarItemProps {
-  title: string;
-  href: string;
-  icon: LucideIcon;
+
+item:any;
+
 }
 
+
+
+
 export default function SidebarItem({
-  title,
-  href,
-  icon: Icon,
-}: SidebarItemProps) {
-  const pathname = usePathname();
 
-  const active = pathname === href;
+item
 
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all",
-        active
-          ? "bg-primary text-primary-foreground shadow-md"
-          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-      )}
-    >
-      <Icon className="h-5 w-5" />
+}:SidebarItemProps){
 
-      <span>{title}</span>
-    </Link>
-  );
+
+
+const pathname = usePathname();
+
+
+const Icon = item.icon;
+
+
+
+const active =
+pathname === item.href;
+
+
+
+
+
+return (
+
+
+<Link
+
+href={item.href}
+
+
+className={`
+
+group
+
+flex
+items-center
+gap-3
+
+rounded-xl
+
+px-4
+py-3
+
+text-sm
+font-medium
+
+transition-all
+duration-300
+
+
+${
+active
+
+?
+
+`
+bg-primary
+text-primary-foreground
+shadow-lg
+shadow-primary/30
+`
+
+:
+
+`
+text-muted-foreground
+hover:bg-muted
+hover:text-foreground
+`
+
+}
+
+
+`}
+
+>
+
+
+
+
+<div
+
+className={`
+
+flex
+h-9
+w-9
+items-center
+justify-center
+
+rounded-lg
+
+
+${
+active
+
+?
+
+"bg-white/20"
+
+:
+
+"bg-muted group-hover:bg-primary/10"
+
+}
+
+`}
+
+>
+
+
+<Icon
+
+className="
+h-5
+w-5
+"
+
+/>
+
+
+</div>
+
+
+
+
+
+<span>
+
+{item.title}
+
+</span>
+
+
+
+
+
+</Link>
+
+
+);
+
+
 }

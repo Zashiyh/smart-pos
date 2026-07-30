@@ -67,6 +67,45 @@ async function getProducts(){
 }
 
 
+async function getStats(){
+
+  try{
+
+    const res = await fetch(
+      "http://localhost:3000/api/dashboard/stats",
+      {
+        cache:"no-store",
+      }
+    );
+
+
+    const data = await res.json();
+
+
+    if(data.success){
+
+      return data.stats;
+
+    }
+
+
+    return null;
+
+
+  }catch(error){
+
+    console.log(
+      "Dashboard stats error:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
 
 
 
@@ -82,36 +121,15 @@ export default async function DashboardPage(){
 
 
 
-const products = await getProducts();
+const [
+  products,
+  statsData
+] = await Promise.all([
+  getProducts(),
+  getStats()
+]);
 
 
-const totalProducts = products.length;
-
-
-const totalStock = products.reduce(
-  (total:any, product:any)=>
-    total + Number(product.stock || 0),
-  0
-);
-
-
-
-const lowStockProducts = products.filter(
-  (product:any)=>
-    product.stock <= product.minStock
-);
-
-
-
-const inventoryValue = products.reduce(
-  (total:any, product:any)=>
-    total +
-    (
-      Number(product.costPrice || 0) *
-      Number(product.stock || 0)
-    ),
-  0
-);
 
 
 
@@ -133,10 +151,10 @@ const inventoryValue = products.reduce(
 const stats = [
 
 {
-
 title:"Total Products",
 
-value:totalProducts,
+value:
+statsData?.totalProducts ?? 0,
 
 icon:Package,
 
@@ -145,48 +163,49 @@ description:"Products in inventory"
 },
 
 
+
 {
+title:"Today's Revenue",
 
-title:"Total Stock",
+value:
+`LKR ${
+(statsData?.todayRevenue ?? 0)
+.toLocaleString("en-LK")
+}`,
 
-value:totalStock,
+icon:Wallet,
 
-icon:Boxes,
-
-description:"Available stock quantity"
+description:"Today's sales"
 
 },
 
 
 
 {
+title:"Today's Orders",
 
+value:
+statsData?.todayOrders ?? 0,
+
+icon:Boxes,
+
+description:"Completed orders"
+
+},
+
+
+
+{
 title:"Low Stock Items",
 
-value:lowStockProducts.length,
+value:
+statsData?.lowStockProducts ?? 0,
 
 icon:AlertTriangle,
 
 description:"Need restocking"
 
-},
-
-
-
-
-{
-
-title:"Inventory Value",
-
-value:`LKR${inventoryValue.toLocaleString()}`,
-
-icon:Wallet,
-
-description:"Current stock value"
-
 }
-
-
 
 ];
 

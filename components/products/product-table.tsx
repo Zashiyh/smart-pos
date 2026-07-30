@@ -1,663 +1,409 @@
 "use client";
 
-
 import { useState } from "react";
-import Link from "next/link";
-
 
 import {
-  Pencil,
-  Search,
-} from "lucide-react";
-
-
-// DELETE COMPONENT
-import DeleteDialog from "@/components/products/delete-dialog";
-
-
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 
 
-import {
-  Button,
-} from "@/components/ui/button";
+interface Product {
 
-
-import {
-  Input,
-} from "@/components/ui/input";
-
-
-
-
-
-// ===============================
-// TYPES
-// ===============================
-
-
-interface ProductTableProps {
-
-  products: any[];
+  _id:string;
+  name:string;
+  barcode:string;
+  sku:string;
+  category:string;
+  brand:string;
+  stock:number;
+  sellingPrice:number;
 
 }
 
 
 
+interface ProductTableProps {
+
+  products:Product[];
+
+}
 
 
 
+const categories = [
+  "All",
+  "Grocery",
+  "Beverages",
+  "Dairy",
+  "Bakery",
+  "Frozen Foods",
+  "Household",
+  "Personal Care",
+  "Electronics",
+  "Pharmacy",
+];
 
 
-// ===============================
-// PRODUCT TABLE COMPONENT
-// ===============================
+
 
 
 export default function ProductTable({
 
-  products
+products
 
-}: ProductTableProps) {
+}:ProductTableProps){
 
 
 
-  const [search, setSearch] = useState("");
+const [search,setSearch] =
+useState("");
 
 
 
+const [category,setCategory] =
+useState("All");
 
 
 
-  // ===============================
-  // SEARCH FILTER
-  // ===============================
 
 
-  const filteredProducts = products.filter(
-    (product) =>
+const filteredProducts =
+products.filter((product)=>{
 
 
-      product.name
-        ?.toLowerCase()
-        .includes(
-          search.toLowerCase()
-        )
+const searchMatch =
+product.name
+.toLowerCase()
+.includes(
+search.toLowerCase()
+);
 
 
-      ||
 
-      product.category
-        ?.toLowerCase()
-        .includes(
-          search.toLowerCase()
-        )
+const categoryMatch =
+category === "All" ||
+product.category === category;
 
-  );
 
 
+return searchMatch && categoryMatch;
 
 
 
+});
 
 
 
 
-  return (
 
 
+return (
 
-    <Card className="rounded-2xl">
 
+<Card className="rounded-2xl">
 
 
+<CardContent className="p-6">
 
 
-      {/* HEADER */}
 
-      <CardHeader>
+{/* FILTERS */}
 
+<div
+className="
+mb-6
+flex
+flex-col
+gap-4
+md:flex-row
+"
+>
 
-        <CardTitle>
 
+<input
 
-          All Products ({filteredProducts.length})
+placeholder="Search product..."
 
+value={search}
 
-        </CardTitle>
+onChange={(e)=>
+setSearch(e.target.value)
+}
 
+className="
+h-10
+rounded-xl
+border
+bg-background
+px-4
+outline-none
+"
+/>
 
-      </CardHeader>
 
 
 
 
+<select
 
+value={category}
 
+onChange={(e)=>
+setCategory(e.target.value)
+}
 
+className="
+h-10
+rounded-xl
+border
+bg-background
+px-4
+"
 
+>
 
-      <CardContent>
 
+{
+categories.map((cat)=>(
 
+<option
+key={cat}
+value={cat}
+>
 
+{cat}
 
+</option>
 
-        {/* ===============================
-            SEARCH BOX
-        =============================== */}
 
+))
+}
 
 
-        <div
 
-          className="
-          mb-5
-          flex
-          items-center
-          gap-3
-          rounded-xl
-          border
-          px-4
-          "
+</select>
 
-        >
 
 
+</div>
 
-          <Search
 
-            className="
-            h-5
-            w-5
-            text-muted-foreground
-            "
 
-          />
 
 
 
 
 
-          <Input
 
+<div className="overflow-x-auto">
 
-            placeholder="Search products..."
 
+<Table>
 
-            value={search}
 
+<TableHeader>
 
-            onChange={
-              (e)=>
-                setSearch(e.target.value)
-            }
 
+<TableRow>
 
 
-            className="
-            border-0
-            focus-visible:ring-0
-            "
+<TableHead>
+Product
+</TableHead>
 
 
-          />
+<TableHead>
+Category
+</TableHead>
 
 
+<TableHead>
+Brand
+</TableHead>
 
-        </div>
 
+<TableHead>
+Stock
+</TableHead>
 
 
+<TableHead>
+Price
+</TableHead>
 
 
+</TableRow>
 
 
+</TableHeader>
 
 
-        {/* ===============================
-            TABLE
-        =============================== */}
 
 
 
-        <div className="overflow-x-auto">
+<TableBody>
 
 
+{
+filteredProducts.length === 0 ?
 
 
+<TableRow>
 
-          <table className="w-full text-sm">
 
+<TableCell
 
+colSpan={5}
 
+className="text-center"
 
+>
 
+No products found
 
-            {/* TABLE HEADER */}
+</TableCell>
 
 
+</TableRow>
 
-            <thead>
 
 
-              <tr
+:
 
-                className="
-                border-b
-                text-left
-                text-muted-foreground
-                "
 
-              >
+filteredProducts.map((product)=>(
 
 
+<TableRow
 
-                <th className="p-3">
-                  Name
-                </th>
+key={product._id}
 
+>
 
 
-                <th className="p-3">
-                  Category
-                </th>
+<TableCell
 
+className="font-medium"
 
+>
 
-                <th className="p-3">
-                  Price
-                </th>
+{product.name}
 
+</TableCell>
 
 
-                <th className="p-3">
-                  Stock
-                </th>
 
 
+<TableCell>
 
-                <th className="p-3">
-                  Status
-                </th>
+{product.category}
 
+</TableCell>
 
 
-                <th className="p-3">
-                  Actions
-                </th>
 
 
 
-              </tr>
+<TableCell>
 
+{product.brand}
 
-            </thead>
+</TableCell>
 
 
 
 
 
+<TableCell>
 
 
+<span
 
+className={`
+rounded-full
+px-3
+py-1
+text-xs
 
-            {/* TABLE BODY */}
+${
+product.stock <= 10
 
+?
 
+"bg-red-500/10 text-red-600"
 
-            <tbody>
+:
 
+"bg-green-500/10 text-green-600"
 
+}
 
+`}
 
-              {
-                filteredProducts.length === 0 ? (
+>
 
+{product.stock}
 
+</span>
 
-                  <tr>
 
+</TableCell>
 
-                    <td
 
-                      colSpan={6}
 
-                      className="
-                      p-6
-                      text-center
-                      text-muted-foreground
-                      "
 
-                    >
 
 
-                      No products found.
+<TableCell>
 
 
-                    </td>
+LKR {product.sellingPrice.toLocaleString("en-LK")}
 
 
+</TableCell>
 
-                  </tr>
 
 
 
-                )
+</TableRow>
 
 
+))
 
-                :
 
+}
 
 
-                (
 
+</TableBody>
 
 
-                  filteredProducts.map(
-                    (product:any)=>(
 
+</Table>
 
 
-                      <tr
+</div>
 
-                        key={product._id}
 
-                        className="
-                        border-b
-                        hover:bg-muted/50
-                        "
 
-                      >
 
+</CardContent>
 
 
+</Card>
 
 
-
-
-
-                        {/* NAME */}
-
-
-                        <td
-
-                          className="
-                          p-3
-                          font-medium
-                          "
-
-                        >
-
-                          {product.name}
-
-
-                        </td>
-
-
-
-
-
-
-
-
-
-
-                        {/* CATEGORY */}
-
-
-
-                        <td className="p-3">
-
-
-                          {product.category}
-
-
-                        </td>
-
-
-
-
-
-
-
-
-
-
-                        {/* PRICE */}
-
-
-
-                        <td className="p-3">
-
-
-                          £{product.sellingPrice}
-
-
-                        </td>
-
-
-
-
-
-
-
-
-
-
-                        {/* STOCK */}
-
-
-
-                        <td className="p-3">
-
-
-                          {product.stock}
-
-
-                        </td>
-
-
-
-
-
-
-
-
-
-
-                        {/* STATUS */}
-
-
-
-                        <td className="p-3">
-
-
-
-                          <span
-
-                            className="
-                            rounded-full
-                            bg-green-500/10
-                            px-3
-                            py-1
-                            text-xs
-                            text-green-600
-                            "
-
-                          >
-
-
-                            {product.status}
-
-
-                          </span>
-
-
-
-                        </td>
-
-
-
-
-
-
-
-
-
-                        {/* ACTIONS */}
-
-
-
-                        <td className="p-3">
-
-
-
-                          <div className="flex gap-2">
-
-
-
-
-
-
-
-                            {/* EDIT BUTTON */}
-
-
-
-                            <Link
-
-                              href={
-                                `/dashboard/products/edit?id=${product._id}`
-                              }
-
-                            >
-
-
-
-                              <Button
-
-                                variant="outline"
-
-                                size="icon"
-
-                                className="rounded-xl"
-
-                              >
-
-
-
-                                <Pencil
-
-                                  className="
-                                  h-4
-                                  w-4
-                                  "
-
-                                />
-
-
-
-                              </Button>
-
-
-
-                            </Link>
-
-
-
-
-
-
-
-
-
-                            {/* DELETE BUTTON */}
-
-
-
-                            <DeleteDialog
-
-                              id={product._id}
-
-                            />
-
-
-
-
-
-
-                          </div>
-
-
-
-
-                        </td>
-
-
-
-
-
-
-
-
-
-                      </tr>
-
-
-
-                    )
-
-                  )
-
-
-
-                )
-
-              }
-
-
-
-
-
-            </tbody>
-
-
-
-
-
-
-          </table>
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-      </CardContent>
-
-
-
-
-
-    </Card>
-
-
-
-  );
+);
 
 
 }

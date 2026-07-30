@@ -1,3 +1,10 @@
+"use client";
+
+import {
+  AlertTriangle,
+  Package,
+} from "lucide-react";
+
 import {
   Card,
   CardContent,
@@ -7,9 +14,23 @@ import {
 
 
 
+interface Product {
+
+  _id:string;
+
+  name:string;
+
+  stock:number;
+
+  minStock:number;
+
+}
+
+
+
 interface LowStockProps {
 
-  products:any[];
+  products:Product[];
 
 }
 
@@ -26,9 +47,13 @@ products
 
 
 const lowStockProducts = products.filter(
-(product:any)=>
+
+(product)=>
+
 product.stock <= product.minStock
+
 );
+
 
 
 
@@ -37,10 +62,65 @@ product.stock <= product.minStock
 return (
 
 
-<Card className="rounded-2xl">
+<Card
+
+className="
+rounded-2xl
+border
+bg-card/80
+backdrop-blur-xl
+shadow-sm
+"
+
+>
 
 
 <CardHeader>
+
+
+<div
+
+className="
+flex
+items-center
+gap-3
+"
+
+>
+
+
+<div
+
+className="
+flex
+h-10
+w-10
+items-center
+justify-center
+rounded-xl
+bg-red-500/10
+"
+
+>
+
+
+<AlertTriangle
+
+className="
+h-5
+w-5
+text-red-500
+"
+
+/>
+
+
+</div>
+
+
+
+
+<div>
 
 
 <CardTitle>
@@ -50,7 +130,31 @@ Low Stock Alert
 </CardTitle>
 
 
+<p
+
+className="
+text-sm
+text-muted-foreground
+"
+
+>
+
+Products need restocking
+
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
 </CardHeader>
+
+
+
 
 
 
@@ -59,40 +163,74 @@ Low Stock Alert
 <CardContent>
 
 
+<div
+
+className="
+space-y-4
+"
+
+>
+
 
 {
-lowStockProducts.length === 0 ? (
+
+lowStockProducts.length === 0 ?
+
+
+
+(
+
+<div
+
+className="
+flex
+items-center
+gap-3
+rounded-xl
+border
+p-4
+"
+
+>
+
+
+<Package
+
+className="
+h-5
+w-5
+text-green-500
+"
+
+/>
 
 
 <p
+
 className="
+text-sm
 text-muted-foreground
 "
+
 >
 
-All products have enough stock.
+All products have enough stock 🎉
 
 </p>
 
 
+</div>
 
 )
 
+
+
 :
 
-(
 
-
-<div
-className="
-space-y-3
-"
->
-
-
-{
 lowStockProducts.map(
-(product:any)=>(
+
+(product)=>(
 
 
 <div
@@ -105,10 +243,58 @@ items-center
 justify-between
 rounded-xl
 border
-p-3
+p-4
+transition
+hover:bg-muted/40
 "
 
 >
+
+
+
+<div
+
+className="
+flex
+items-center
+gap-3
+"
+
+>
+
+
+
+<div
+
+className="
+flex
+h-10
+w-10
+items-center
+justify-center
+rounded-xl
+bg-primary/10
+"
+
+>
+
+
+<Package
+
+className="
+h-5
+w-5
+text-primary
+"
+
+/>
+
+
+</div>
+
+
+
+
 
 
 
@@ -116,9 +302,11 @@ p-3
 
 
 <p
+
 className="
 font-medium
 "
+
 >
 
 {product.name}
@@ -128,15 +316,23 @@ font-medium
 
 
 <p
+
 className="
 text-sm
 text-muted-foreground
 "
+
 >
 
 Minimum Stock: {product.minStock}
 
 </p>
+
+
+
+</div>
+
+
 
 
 </div>
@@ -145,6 +341,17 @@ Minimum Stock: {product.minStock}
 
 
 
+
+
+
+
+<div
+
+className="
+text-right
+"
+
+>
 
 
 <span
@@ -155,6 +362,7 @@ bg-red-500/10
 px-3
 py-1
 text-xs
+font-medium
 text-red-600
 "
 
@@ -165,21 +373,11 @@ text-red-600
 </span>
 
 
-
-
-
-
 </div>
 
 
 
-)
 
-
-)
-
-
-}
 
 
 
@@ -189,12 +387,19 @@ text-red-600
 )
 
 
+)
+
+
+
 }
+
+
+
+</div>
 
 
 
 </CardContent>
-
 
 
 </Card>

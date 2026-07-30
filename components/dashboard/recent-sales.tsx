@@ -25,15 +25,16 @@ import {
 
 
 
+
 interface Sale {
 
   _id:string;
 
   invoiceNumber:string;
 
-  customerName:string;
+  customerName?:string;
 
-  totalAmount:number;
+  totalAmount?:number;
 
   paymentMethod:string;
 
@@ -45,13 +46,20 @@ interface Sale {
 
 
 
+
+
 export default function RecentSales(){
 
 
 
-const [sales,setSales] = useState<Sale[]>([]);
+const [sales,setSales] =
+useState<Sale[]>([]);
 
-const [loading,setLoading] = useState(true);
+
+
+const [loading,setLoading] =
+useState(true);
+
 
 
 
@@ -68,11 +76,17 @@ try{
 
 
 const res = await fetch(
-"/api/sales"
+"/api/sales",
+{
+cache:"no-store"
+}
 );
 
 
-const data = await res.json();
+
+const data =
+await res.json();
+
 
 
 
@@ -80,7 +94,9 @@ if(data.success){
 
 
 setSales(
+
 data.sales.slice(0,5)
+
 );
 
 
@@ -97,6 +113,7 @@ error
 );
 
 
+
 }finally{
 
 
@@ -106,11 +123,13 @@ setLoading(false);
 }
 
 
+
 }
 
 
 
 getSales();
+
 
 
 },[]);
@@ -122,7 +141,9 @@ getSales();
 
 
 
+
 return (
+
 
 <Card
 
@@ -177,7 +198,6 @@ Latest customer transactions
 
 
 
-
 <CardContent>
 
 
@@ -185,6 +205,7 @@ Latest customer transactions
 
 
 <Table>
+
 
 
 <TableHeader>
@@ -228,7 +249,11 @@ Status
 
 
 
+
+
 <TableBody>
+
+
 
 
 
@@ -236,7 +261,9 @@ Status
 loading ?
 
 
+
 <TableRow>
+
 
 <TableCell
 
@@ -246,7 +273,7 @@ className="text-center"
 
 >
 
-Loading...
+Loading sales...
 
 </TableCell>
 
@@ -255,13 +282,20 @@ Loading...
 
 
 
+
+
+
 :
+
+
 
 sales.length === 0 ?
 
 
 
+
 <TableRow>
+
 
 <TableCell
 
@@ -280,11 +314,16 @@ No sales found
 
 
 
+
+
+
+
 :
 
 
 
 sales.map((sale)=>(
+
 
 
 <TableRow
@@ -299,6 +338,8 @@ hover:bg-muted/50
 
 
 
+
+
 <TableCell
 
 className="
@@ -307,9 +348,13 @@ font-medium
 
 >
 
+
 {sale.invoiceNumber}
 
+
 </TableCell>
+
+
 
 
 
@@ -347,19 +392,46 @@ font-semibold
 
 >
 
-{sale.customerName.charAt(0)}
+
+{
+
+(
+sale.customerName ||
+"Walk-in Customer"
+)
+.charAt(0)
+
+}
+
 
 </div>
 
 
 
-{sale.customerName}
+
+
+<span>
+
+{
+
+sale.customerName ||
+
+"Walk-in Customer"
+
+}
+
+
+</span>
+
 
 
 </div>
 
 
 </TableCell>
+
+
+
 
 
 
@@ -376,9 +448,19 @@ font-semibold
 
 >
 
-LKR {sale.totalAmount.toLocaleString("en-LK")}
+
+LKR {
+
+(
+sale.totalAmount || 0
+)
+.toLocaleString("en-LK")
+
+}
+
 
 </TableCell>
+
 
 
 
@@ -405,20 +487,48 @@ gap-2
 
 sale.paymentMethod === "Card"
 
+
 ?
 
-<CreditCard className="h-4 w-4 text-blue-500"/>
+
+<CreditCard
+
+className="
+h-4
+w-4
+text-blue-500
+"
+
+/>
+
+
 
 :
 
-<Banknote className="h-4 w-4 text-green-500"/>
+
+
+<Banknote
+
+className="
+h-4
+w-4
+text-green-500
+"
+
+/>
 
 
 }
 
 
 
-{sale.paymentMethod}
+
+{
+
+sale.paymentMethod
+
+}
+
 
 
 </div>
@@ -432,17 +542,26 @@ sale.paymentMethod === "Card"
 
 
 
+
+
 <TableCell>
 
 
 <span
 
 className={`
+
 rounded-full
+
 px-3
+
 py-1
+
 text-xs
+
 font-medium
+
+
 
 ${
 sale.status === "Completed"
@@ -475,7 +594,9 @@ sale.status === "Completed"
 
 
 
+
 </TableRow>
+
 
 
 ))
