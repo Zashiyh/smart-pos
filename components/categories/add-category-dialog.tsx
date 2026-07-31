@@ -18,63 +18,161 @@ import { Textarea } from "@/components/ui/textarea";
 
 
 
-export default function AddCategoryDialog() {
+export default function AddCategoryDialog(){
 
 
-  const [name,setName] = useState("");
+  const [name,setName] =
+    useState("");
 
-  const [description,setDescription] = useState("");
+
+  const [description,setDescription] =
+    useState("");
+
+
+
+  const [loading,setLoading] =
+    useState(false);
+
+
+
+
 
 
 
   async function createCategory(){
 
 
-    const res = await fetch(
-      "/api/categories",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-        },
-        body:JSON.stringify({
-          name,
-          description,
-        }),
+    try{
+
+
+      setLoading(true);
+
+
+
+
+      const response =
+        await fetch(
+          "/api/categories",
+          {
+            method:"POST",
+
+            headers:{
+              "Content-Type":"application/json",
+            },
+
+            body:JSON.stringify({
+
+              name,
+
+              description,
+
+              status:"Active",
+
+            }),
+
+          }
+        );
+
+
+
+
+
+
+
+      const data =
+        await response.json();
+
+
+
+
+
+
+      if(data.success){
+
+
+        alert("Category Added");
+
+
+        setName("");
+
+        setDescription("");
+
+
+        window.location.reload();
+
+
+      }else{
+
+
+        alert(
+          data.message || "Failed to add category"
+        );
+
+
       }
-    );
 
 
-    const data = await res.json();
 
 
-    if(data.success){
 
-      alert("Category Added");
+    }catch(error){
 
-      setName("");
 
-      setDescription("");
+      console.log(
+        "Add category error:",
+        error
+      );
+
+
+      alert(
+        "Something went wrong"
+      );
+
+
+
+    }finally{
+
+
+      setLoading(false);
+
 
     }
+
 
 
   }
 
 
 
+
+
+
+
+
+
   return (
+
 
     <Dialog>
 
 
+
       <DialogTrigger>
 
-        <Button>
+
+        <Button type="button">
+
           Add Category
+
         </Button>
 
+
       </DialogTrigger>
+
+
+
+
+
 
 
 
@@ -82,13 +180,24 @@ export default function AddCategoryDialog() {
       <DialogContent>
 
 
+
+
+
         <DialogHeader>
 
+
           <DialogTitle>
+
             Add Category
+
           </DialogTitle>
 
+
         </DialogHeader>
+
+
+
+
 
 
 
@@ -97,42 +206,101 @@ export default function AddCategoryDialog() {
         <div className="space-y-4">
 
 
+
+
+
+
           <Input
+
 
             placeholder="Category name"
 
+
             value={name}
 
+
             onChange={(e)=>
-              setName(e.target.value)
+
+              setName(
+                e.target.value
+              )
+
             }
 
+
           />
+
+
+
+
+
 
 
 
           <Textarea
 
+
             placeholder="Description"
+
 
             value={description}
 
+
             onChange={(e)=>
-              setDescription(e.target.value)
+
+              setDescription(
+                e.target.value
+              )
+
             }
+
 
           />
 
 
 
+
+
+
+
+
+
           <Button
-            onClick={createCategory}
+
+
             className="w-full"
+
+
+            onClick={createCategory}
+
+
+            disabled={loading}
+
+
           >
 
-            Save Category
+
+
+            {
+
+              loading
+
+              ?
+
+              "Saving..."
+
+              :
+
+              "Save Category"
+
+            }
+
+
 
           </Button>
+
+
+
 
 
 
@@ -140,11 +308,21 @@ export default function AddCategoryDialog() {
 
 
 
+
+
+
+
       </DialogContent>
+
+
+
+
 
 
     </Dialog>
 
+
   );
+
 
 }

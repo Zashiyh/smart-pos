@@ -21,6 +21,7 @@ import EditCategoryDialog from "./edit-category-dialog";
 
 
 
+
 interface Category {
 
   _id: string;
@@ -36,11 +37,15 @@ interface Category {
 
 
 
+
 interface CategoryTableProps {
 
   categories: Category[];
 
 }
+
+
+
 
 
 
@@ -54,459 +59,561 @@ export default function CategoryTable({
 
 
 
-  const [categoryList, setCategoryList] =
-    useState<Category[]>(categories);
+const [categoryList,setCategoryList] =
+useState<Category[]>(categories);
 
 
 
-  const [loading, setLoading] =
-    useState(false);
+const [loading,setLoading] =
+useState(false);
 
 
 
 
 
 
-  async function refreshCategories() {
 
 
-    try {
 
+async function refreshCategories(){
 
-      setLoading(true);
 
+try{
 
 
-      const response =
-        await fetch("/api/categories", {
-          cache: "no-store",
-        });
+setLoading(true);
 
 
 
-      const data =
-        await response.json();
+const response =
+await fetch(
 
+"/api/categories",
 
+{
+cache:"no-store",
+}
 
+);
 
-      if(data.success){
 
-        setCategoryList(
-          data.categories
-        );
 
-      }
+const data =
+await response.json();
 
 
 
-    } catch(error){
 
 
-      console.log(
-        "Refresh error:",
-        error
-      );
+if(data.success){
 
 
-    } finally {
+setCategoryList(
+data.categories
+);
 
 
-      setLoading(false);
+}
 
 
-    }
 
+}catch(error){
 
-  }
 
+console.log(
+"Refresh error:",
+error
+);
 
 
 
+}finally{
 
 
+setLoading(false);
 
 
-  async function deleteCategory(id:string){
+}
 
 
 
-    const confirmDelete =
-      confirm(
-        "Are you sure you want to delete this category?"
-      );
+}
 
 
 
-    if(!confirmDelete)
-      return;
 
 
 
 
 
-    try{
 
+async function deleteCategory(id:string){
 
-      const response =
-        await fetch(
 
-          `/api/categories/${id}`,
 
-          {
-            method:"DELETE",
-          }
+const confirmDelete =
+confirm(
+"Are you sure you want to delete this category?"
+);
 
-        );
 
 
+if(!confirmDelete)
+return;
 
-      const data =
-        await response.json();
 
 
 
 
-      if(data.success){
+try{
 
 
-        setCategoryList((prev)=>
+const response =
+await fetch(
 
-          prev.filter(
+`/api/categories/${id}`,
 
-            (item)=>
+{
 
-              item._id !== id
+method:"DELETE",
 
-          )
+}
 
-        );
+);
 
 
-      }
 
 
 
 
-    }catch(error){
+const data =
+await response.json();
 
 
-      console.log(
-        "Delete error:",
-        error
-      );
 
 
-    }
 
+if(data.success){
 
 
-  }
 
+setCategoryList(
 
+(prev)=>
 
+prev.filter(
 
+(item)=>
 
+item._id !== id
 
+)
 
+);
 
-  return (
 
+}
 
-    <div className="space-y-4">
 
 
+}catch(error){
 
-      <div className="flex justify-end">
 
+console.log(
+"Delete error:",
+error
+);
 
-        <Button
 
 
-          variant="outline"
+}
 
 
-          onClick={refreshCategories}
+}
 
 
-          disabled={loading}
 
 
-        >
 
 
-          <RefreshCw
 
-            className={`
-            mr-2
-            h-4
-            w-4
 
-            ${
-              loading
-              ?
-              "animate-spin"
-              :
-              ""
-            }
-            `}
 
-          />
+return (
 
 
-          Refresh
 
+<div className="space-y-4">
 
-        </Button>
 
 
-      </div>
 
 
 
+<div className="flex justify-end">
 
 
+<Button
 
+variant="outline"
 
+onClick={refreshCategories}
 
-      <div className="
-        overflow-hidden
-        rounded-2xl
-        border
-        bg-background
-      ">
+disabled={loading}
 
+>
 
-        <table className="w-full">
 
+<RefreshCw
 
-          <thead className="border-b bg-muted/40">
+className={`
+mr-2
+h-4
+w-4
 
-            <tr>
+${
 
-              <th className="p-4 text-left">
-                Name
-              </th>
+loading
 
-              <th className="p-4 text-left">
-                Description
-              </th>
+?
 
-              <th className="p-4 text-left">
-                Status
-              </th>
+"animate-spin"
 
-              <th className="p-4 text-right">
-                Actions
-              </th>
+:
 
+""
 
-            </tr>
+}
 
+`}
 
-          </thead>
+/>
 
 
+Refresh
 
 
+</Button>
 
-          <tbody>
 
+</div>
 
-          {
-            categoryList.length === 0
 
-            ?
 
-            (
 
-              <tr>
 
-                <td
-                  colSpan={4}
-                  className="
-                  p-6
-                  text-center
-                  text-muted-foreground
-                  "
-                >
 
-                  No categories found
 
-                </td>
 
-              </tr>
 
-            )
+<div
 
+className="
+overflow-hidden
+rounded-2xl
+border
+bg-background
+"
 
-            :
+>
 
 
-            categoryList.map((category)=>(
+<table className="w-full">
 
 
-              <tr
-                key={category._id}
-                className="
-                border-b
-                hover:bg-muted/30
-                "
-              >
 
+<thead className="border-b bg-muted/40">
 
 
-                <td className="p-4 font-medium">
+<tr>
 
-                  {category.name}
 
-                </td>
+<th className="p-4 text-left">
 
+Name
 
+</th>
 
 
-                <td className="p-4 text-muted-foreground">
+<th className="p-4 text-left">
 
-                  {category.description || "-"}
+Description
 
-                </td>
+</th>
 
 
+<th className="p-4 text-left">
 
+Status
 
+</th>
 
-                <td className="p-4">
 
+<th className="p-4 text-right">
 
-                  <span
-                    className={`
-                    rounded-full
-                    px-3
-                    py-1
-                    text-xs
-                    font-medium
+Actions
 
-                    ${
-                      category.status === "Active"
+</th>
 
-                      ?
 
-                      "bg-green-500/10 text-green-600"
+</tr>
 
-                      :
 
-                      "bg-red-500/10 text-red-600"
+</thead>
 
-                    }
-                    `}
-                  >
 
-                    {category.status}
 
 
-                  </span>
 
 
-                </td>
 
 
 
+<tbody>
 
 
 
+{
 
-                <td className="p-4">
+categoryList.length === 0 ?
 
 
-                  <div className="
-                    flex
-                    justify-end
-                    gap-2
-                  ">
+<tr>
 
 
-                    <EditCategoryDialog
+<td
 
-                      category={{
+colSpan={4}
 
-                        _id: category._id,
+className="
+p-6
+text-center
+text-muted-foreground
+"
 
-                        name: category.name,
+>
 
-                        description:
-                          category.description ?? "",
+No categories found
 
-                        status:
-                          category.status === "Inactive"
-                          ?
-                          "Inactive"
-                          :
-                          "Active"
+</td>
 
-                      }}
 
-                    />
+</tr>
 
 
 
+:
 
 
-                    <Button
 
-                      variant="destructive"
 
-                      size="icon"
 
-                      onClick={()=>
+categoryList.map((category)=>(
 
-                        deleteCategory(
-                          category._id
-                        )
 
-                      }
 
-                    >
+<tr
 
-                      <Trash2
-                        className="
-                        h-4
-                        w-4
-                        "
-                      />
+key={category._id}
 
-                    </Button>
+className="
+border-b
+hover:bg-muted/30
+"
 
+>
 
 
-                  </div>
 
 
-                </td>
+<td className="p-4 font-medium">
 
 
+{category.name}
 
-              </tr>
 
+</td>
 
-            ))
 
-          }
 
 
 
-          </tbody>
 
+<td className="p-4 text-muted-foreground">
 
-        </table>
 
+{category.description || "-"}
 
-      </div>
 
+</td>
 
-    </div>
 
 
-  );
+
+
+
+
+<td className="p-4">
+
+
+<span
+
+className={`
+
+rounded-full
+px-3
+py-1
+text-xs
+font-medium
+
+
+${
+
+category.status === "Active"
+
+?
+
+"bg-green-500/10 text-green-600"
+
+:
+
+"bg-red-500/10 text-red-600"
+
+}
+
+`}
+
+>
+
+
+{category.status}
+
+
+</span>
+
+
+</td>
+
+
+
+
+
+
+
+
+
+<td className="p-4">
+
+
+<div
+
+className="
+flex
+justify-end
+gap-2
+"
+
+>
+
+
+
+<EditCategoryDialog
+
+category={category}
+
+/>
+
+
+
+
+
+
+
+<Button
+
+
+variant="destructive"
+
+
+size="icon"
+
+
+type="button"
+
+
+onClick={()=>
+
+
+deleteCategory(
+category._id
+)
+
+
+}
+
+
+>
+
+
+<Trash2
+
+className="
+h-4
+w-4
+"
+
+/>
+
+
+</Button>
+
+
+
+
+
+</div>
+
+
+</td>
+
+
+
+
+
+
+</tr>
+
+
+
+))
+
+
+}
+
+
+
+
+</tbody>
+
+
+
+
+</table>
+
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+);
 
 
 }

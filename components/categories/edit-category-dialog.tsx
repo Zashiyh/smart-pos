@@ -35,17 +35,20 @@ import {
 
 
 
+
 interface Category {
 
   _id: string;
 
   name: string;
 
-  description: string;
+  description?: string;
 
   status: string;
 
 }
+
+
 
 
 
@@ -60,6 +63,8 @@ interface EditCategoryDialogProps {
 
 
 
+
+
 export default function EditCategoryDialog({
 
   category,
@@ -68,303 +73,391 @@ export default function EditCategoryDialog({
 
 
 
-  const [name, setName] =
-    useState(category.name);
 
+const [name,setName] =
+useState(category.name);
 
-  const [description, setDescription] =
-    useState(category.description || "");
 
 
-  const [status, setStatus] =
-    useState(category.status || "Active");
+const [description,setDescription] =
+useState(category.description ?? "");
 
 
 
-  const [loading, setLoading] =
-    useState(false);
+const [status,setStatus] =
+useState(category.status || "Active");
 
 
 
+const [loading,setLoading] =
+useState(false);
 
 
 
 
-  async function updateCategory() {
 
 
-    try {
 
 
-      setLoading(true);
 
+async function updateCategory(){
 
 
-      const response =
-        await fetch(
 
-          `/api/categories/${category._id}`,
+try{
 
-          {
 
-            method: "PUT",
 
-            headers: {
+setLoading(true);
 
-              "Content-Type": "application/json",
 
-            },
 
 
-            body: JSON.stringify({
 
-              name,
+const response =
+await fetch(
 
-              description,
+`/api/categories/${category._id}`,
 
-              status,
+{
 
-            }),
+method:"PUT",
 
+headers:{
 
-          }
+"Content-Type":"application/json",
 
-        );
+},
 
 
+body:JSON.stringify({
 
+name,
 
+description,
 
-      const data =
-        await response.json();
+status,
 
+}),
 
 
+}
 
+);
 
-      if(data.success){
 
 
-        window.location.reload();
 
 
-      }
 
 
+const data =
+await response.json();
 
 
-    } catch(error){
 
 
-      console.log(
-        error
-      );
 
 
-    } finally {
+if(data.success){
 
 
-      setLoading(false);
+alert("Category Updated");
 
 
-    }
+window.location.reload();
 
 
-  }
+}
 
 
 
 
 
+}catch(error){
 
 
+console.log(
+"Update category error:",
+error
+);
 
-  return (
 
 
-    <Dialog>
+}finally{
 
 
-      <DialogTrigger>
+setLoading(false);
 
 
-        <Button
+}
 
-          variant="outline"
 
-          size="icon"
 
-          type="button"
+}
 
-        >
 
-          <Pencil
 
-            className="
-            h-4
-            w-4
-            "
 
-          />
 
 
-        </Button>
 
 
-      </DialogTrigger>
 
+return (
 
 
 
+<Dialog>
 
 
 
-      <DialogContent>
 
 
+<DialogTrigger>
 
-        <DialogHeader>
 
-          <DialogTitle>
+<Button
 
-            Edit Category
 
-          </DialogTitle>
+variant="outline"
 
-        </DialogHeader>
 
+size="icon"
 
 
+type="button"
 
 
+>
 
 
-        <div className="space-y-4">
+<Pencil
 
+className="
+h-4
+w-4
+"
 
-          <Input
+/>
 
-            value={name}
 
-            onChange={(e)=>
+</Button>
 
-              setName(
-                e.target.value
-              )
 
-            }
+</DialogTrigger>
 
-            placeholder="Category name"
 
-          />
 
 
 
 
 
 
-          <Textarea
 
-            value={description}
+<DialogContent>
 
-            onChange={(e)=>
 
-              setDescription(
-                e.target.value
-              )
 
-            }
 
-            placeholder="Description"
 
-          />
+<DialogHeader>
 
 
+<DialogTitle>
 
+Edit Category
 
+</DialogTitle>
 
 
+</DialogHeader>
 
-          <select
 
-            value={status}
 
-            onChange={(e)=>
 
-              setStatus(
-                e.target.value
-              )
 
-            }
 
 
-            className="
-            w-full
-            rounded-lg
-            border
-            bg-background
-            p-2
-            "
 
-          >
 
-            <option value="Active">
-              Active
-            </option>
+<div className="space-y-4">
 
 
-            <option value="Inactive">
-              Inactive
-            </option>
 
 
-          </select>
 
+<Input
 
 
+placeholder="Category name"
 
 
+value={name}
 
 
-          <Button
+onChange={(e)=>
 
-            className="w-full"
+setName(
+e.target.value
+)
 
-            onClick={updateCategory}
+}
 
-            disabled={loading}
 
-          >
+/>
 
-            {
-              loading
-              ?
-              "Updating..."
-              :
-              "Update Category"
-            }
 
 
-          </Button>
 
 
 
 
-        </div>
 
 
+<Textarea
 
 
+placeholder="Description"
 
-      </DialogContent>
 
+value={description}
 
 
+onChange={(e)=>
 
-    </Dialog>
+setDescription(
+e.target.value
+)
 
+}
 
-  );
+
+/>
+
+
+
+
+
+
+
+
+
+<select
+
+
+value={status}
+
+
+onChange={(e)=>
+
+setStatus(
+e.target.value
+)
+
+}
+
+
+className="
+w-full
+rounded-lg
+border
+bg-background
+p-2
+"
+
+
+>
+
+
+<option value="Active">
+
+Active
+
+</option>
+
+
+
+<option value="Inactive">
+
+Inactive
+
+</option>
+
+
+
+</select>
+
+
+
+
+
+
+
+
+
+<Button
+
+
+className="w-full"
+
+
+onClick={updateCategory}
+
+
+disabled={loading}
+
+
+>
+
+
+
+{
+
+loading
+
+?
+
+"Updating..."
+
+:
+
+"Update Category"
+
+}
+
+
+
+</Button>
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+</DialogContent>
+
+
+
+
+
+
+
+</Dialog>
+
+
+
+);
 
 
 }
