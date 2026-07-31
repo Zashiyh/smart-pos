@@ -1,9 +1,7 @@
 import ProductTable from "@/components/products/product-table";
 import ProductForm from "@/components/products/product-form";
 
-
 interface Product {
-
   _id: string;
   name: string;
   barcode: string;
@@ -15,222 +13,142 @@ interface Product {
   sellingPrice: number;
   stock: number;
   status: string;
-
 }
 
-
-
 async function getProducts(): Promise<Product[]> {
-
-
   try {
-
-
     const response = await fetch(
       "http://localhost:3000/api/products",
       {
-        cache:"no-store",
+        cache: "no-store",
       }
     );
 
+    const data = await response.json();
 
-
-    const data =
-      await response.json();
-
-
-
-    if(data.success){
-
+    if (data.success) {
       return data.products;
-
     }
 
-
     return [];
-
-
-
-  }catch(error){
-
-
+  } catch (error) {
     console.log(
       "PRODUCT FETCH ERROR:",
       error
     );
-
-
     return [];
-
-
   }
-
-
 }
 
-
-
-
-
-
-
-export default async function ProductsPage(){
-
-
-const products =
-await getProducts();
-
-
-
-
-return (
-
-
-<main
-
-className="
-min-h-screen
-rounded-3xl
-bg-muted/30
-p-6
-space-y-8
-"
-
->
-
-
-
-
-
-{/* HEADER */}
-
-<div>
-
-
-<h1
-
-className="
-text-3xl
-font-bold
-"
-
->
-
-Products
-
-</h1>
-
-
-
-<p
-
-className="
-text-muted-foreground
-"
-
->
-
-Manage inventory products
-
-</p>
-
-
-</div>
-
-
-
-
-
-
-
-{/* ADD PRODUCT SECTION */}
-
-
-<section
-
-className="
-rounded-2xl
-border
-bg-background
-p-6
-shadow-sm
-"
-
->
-
-
-<div className="mb-4">
-
-
-<h2
-
-className="
-text-xl
-font-semibold
-"
-
->
-
-Add Product
-
-</h2>
-
-
-<p
-
-className="
-text-sm
-text-muted-foreground
-"
-
->
-
-Create new inventory product
-
-</p>
-
-
-</div>
-
-
-
-<ProductForm />
-
-
-
-</section>
-
-
-
-
-
-
-
-{/* PRODUCT TABLE */}
-
-
-<section>
-
-
-<ProductTable
-
-products={products}
-
-/>
-
-
-</section>
-
-
-
-
-
-
-
-</main>
-
-
-);
-
-
+export default async function ProductsPage() {
+  const products = await getProducts();
+
+  return (
+    <main
+      className="
+        min-h-screen
+        bg-gradient-to-br
+        from-blue-50/50
+        via-white
+        to-blue-100/30
+        dark:from-slate-900
+        dark:via-slate-800
+        dark:to-blue-950/50
+        p-6
+        space-y-8
+        transition-colors
+        duration-300
+      "
+    >
+      {/* HEADER */}
+      <div>
+        <h1
+          className="
+            text-4xl
+            font-bold
+            bg-gradient-to-r
+            from-blue-600
+            to-blue-800
+            dark:from-white
+            dark:to-blue-200
+            bg-clip-text
+            text-transparent
+          "
+        >
+          Products
+        </h1>
+        <p
+          className="
+            text-blue-600/70
+            dark:text-slate-400
+            mt-1
+          "
+        >
+          Manage inventory products
+        </p>
+      </div>
+
+      {/* ADD PRODUCT SECTION */}
+      <section
+        className="
+          rounded-2xl
+          border
+          p-6
+          shadow-sm
+          hover:shadow-lg
+          transition-all
+          duration-300
+          border-blue-100/50
+          dark:border-blue-900/30
+          bg-white
+          dark:bg-slate-800/90
+          backdrop-blur-sm
+        "
+      >
+        <div className="mb-4">
+          <h2
+            className="
+              text-xl
+              font-semibold
+              text-blue-900
+              dark:text-white
+            "
+          >
+            Add Product
+          </h2>
+          <p
+            className="
+              text-sm
+              text-blue-600/70
+              dark:text-slate-400
+            "
+          >
+            Create new inventory product
+          </p>
+        </div>
+
+        <ProductForm />
+      </section>
+
+      {/* PRODUCT TABLE */}
+      <section
+        className="
+          rounded-2xl
+          border
+          p-6
+          shadow-sm
+          hover:shadow-lg
+          transition-all
+          duration-300
+          border-blue-100/50
+          dark:border-blue-900/30
+          bg-white
+          dark:bg-slate-800/90
+          backdrop-blur-sm
+        "
+      >
+        <ProductTable products={products} />
+      </section>
+    </main>
+  );
 }

@@ -1,98 +1,386 @@
 import {
   Palette,
+  Sun,
+  Moon,
+  Monitor,
+  Check,
 } from "lucide-react";
 
+export default function AppearanceSettingsPage() {
+  return (
+    <main
+      className="
+        min-h-screen
+        bg-gradient-to-br
+        from-blue-50/50
+        via-white
+        to-blue-100/30
+        dark:from-slate-900
+        dark:via-slate-800
+        dark:to-blue-950/50
+        p-6
+        space-y-8
+        transition-colors
+        duration-300
+      "
+    >
+      {/* Header */}
+      <div>
+        <h1
+          className="
+            text-4xl
+            font-bold
+            bg-gradient-to-r
+            from-blue-600
+            to-blue-800
+            dark:from-white
+            dark:to-blue-200
+            bg-clip-text
+            text-transparent
+          "
+        >
+          Appearance
+        </h1>
+        <p
+          className="
+            text-blue-600/70
+            dark:text-slate-400
+            mt-1
+          "
+        >
+          Customize the look and feel of your SmartPOS dashboard
+        </p>
+      </div>
 
+      {/* Theme Settings */}
+      <div
+        className="
+          rounded-2xl
+          border-0
+          shadow-sm
+          hover:shadow-lg
+          transition-all
+          duration-300
+          bg-white
+          dark:bg-slate-800/90
+          backdrop-blur-sm
+          border-blue-100/50
+          dark:border-blue-900/30
+          p-6
+        "
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="
+              rounded-xl
+              bg-blue-100
+              dark:bg-blue-900/30
+              p-3
+              transition-colors
+              duration-300
+            "
+          >
+            <Palette
+              className="
+                h-6
+                w-6
+                text-blue-600
+                dark:text-blue-400
+              "
+            />
+          </div>
+          <div>
+            <h2
+              className="
+                font-semibold
+                text-lg
+                text-blue-900
+                dark:text-white
+              "
+            >
+              Theme Settings
+            </h2>
+            <p
+              className="
+                text-sm
+                text-blue-600/70
+                dark:text-slate-400
+              "
+            >
+              Choose your preferred theme mode
+            </p>
+          </div>
+        </div>
 
-export default function AppearanceSettingsPage(){
+        <div
+          className="
+            mt-5
+            grid
+            gap-4
+            md:grid-cols-3
+          "
+        >
+          {/* Light Mode */}
+          <button
+            className="
+              group
+              rounded-xl
+              border-2
+              p-4
+              transition-all
+              duration-300
+              hover:shadow-md
+              border-blue-200
+              dark:border-blue-900/30
+              bg-white
+              dark:bg-slate-800
+              hover:border-blue-400
+              dark:hover:border-blue-500
+              relative
+              text-left
+            "
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="
+                  rounded-lg
+                  bg-blue-100
+                  dark:bg-blue-900/30
+                  p-2
+                  transition-colors
+                  duration-300
+                "
+              >
+                <Sun
+                  className="
+                    h-5
+                    w-5
+                    text-yellow-500
+                    dark:text-yellow-400
+                  "
+                />
+              </div>
+              <div>
+                <p
+                  className="
+                    font-medium
+                    text-blue-900
+                    dark:text-white
+                  "
+                >
+                  Light Mode
+                </p>
+                <p
+                  className="
+                    text-xs
+                    text-blue-500/60
+                    dark:text-slate-400
+                  "
+                >
+                  Bright and clean
+                </p>
+              </div>
+            </div>
+            <div
+              className="
+                absolute
+                top-2
+                right-2
+                rounded-full
+                bg-blue-500
+                dark:bg-blue-400
+                p-0.5
+              "
+            >
+              <Check className="h-3 w-3 text-white" />
+            </div>
+          </button>
 
+          {/* Dark Mode */}
+          <button
+            className="
+              group
+              rounded-xl
+              border-2
+              p-4
+              transition-all
+              duration-300
+              hover:shadow-md
+              border-blue-200
+              dark:border-blue-400
+              bg-white
+              dark:bg-slate-800
+              hover:border-blue-400
+              dark:hover:border-blue-300
+              relative
+              text-left
+            "
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="
+                  rounded-lg
+                  bg-blue-100
+                  dark:bg-blue-900/30
+                  p-2
+                  transition-colors
+                  duration-300
+                "
+              >
+                <Moon
+                  className="
+                    h-5
+                    w-5
+                    text-blue-600
+                    dark:text-blue-400
+                  "
+                />
+              </div>
+              <div>
+                <p
+                  className="
+                    font-medium
+                    text-blue-900
+                    dark:text-white
+                  "
+                >
+                  Dark Mode
+                </p>
+                <p
+                  className="
+                    text-xs
+                    text-blue-500/60
+                    dark:text-slate-400
+                  "
+                >
+                  Easy on the eyes
+                </p>
+              </div>
+            </div>
+            <div
+              className="
+                absolute
+                top-2
+                right-2
+                rounded-full
+                bg-blue-500
+                dark:bg-blue-400
+                p-0.5
+                opacity-0
+                group-hover:opacity-100
+                transition-opacity
+                duration-300
+              "
+            >
+              <Check className="h-3 w-3 text-white" />
+            </div>
+          </button>
 
-return (
+          {/* System Default */}
+          <button
+            className="
+              group
+              rounded-xl
+              border-2
+              p-4
+              transition-all
+              duration-300
+              hover:shadow-md
+              border-blue-200
+              dark:border-blue-900/30
+              bg-white
+              dark:bg-slate-800
+              hover:border-blue-400
+              dark:hover:border-blue-500
+              relative
+              text-left
+            "
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="
+                  rounded-lg
+                  bg-blue-100
+                  dark:bg-blue-900/30
+                  p-2
+                  transition-colors
+                  duration-300
+                "
+              >
+                <Monitor
+                  className="
+                    h-5
+                    w-5
+                    text-blue-600
+                    dark:text-blue-400
+                  "
+                />
+              </div>
+              <div>
+                <p
+                  className="
+                    font-medium
+                    text-blue-900
+                    dark:text-white
+                  "
+                >
+                  System Default
+                </p>
+                <p
+                  className="
+                    text-xs
+                    text-blue-500/60
+                    dark:text-slate-400
+                  "
+                >
+                  Follow OS settings
+                </p>
+              </div>
+            </div>
+            <div
+              className="
+                absolute
+                top-2
+                right-2
+                rounded-full
+                bg-blue-500
+                dark:bg-blue-400
+                p-0.5
+                opacity-0
+                group-hover:opacity-100
+                transition-opacity
+                duration-300
+              "
+            >
+              <Check className="h-3 w-3 text-white" />
+            </div>
+          </button>
+        </div>
 
-<main
-
-className="
-min-h-screen
-space-y-6
-rounded-3xl
-bg-muted/30
-p-6
-"
-
->
-
-
-<h1 className="text-3xl font-bold">
-Appearance
-</h1>
-
-
-<p className="text-muted-foreground">
-Customize application interface
-</p>
-
-
-
-
-
-<div
-
-className="
-rounded-2xl
-border
-bg-background
-p-6
-"
-
->
-
-
-<div className="flex items-center gap-3">
-
-<Palette className="text-primary"/>
-
-<h2 className="font-semibold">
-Theme Settings
-</h2>
-
-
-</div>
-
-
-
-
-
-<div className="mt-5 space-y-3">
-
-
-<button className="rounded-xl border px-5 py-3">
-Light Mode
-</button>
-
-
-<button className="rounded-xl border px-5 py-3">
-Dark Mode
-</button>
-
-
-<button className="rounded-xl border px-5 py-3">
-System Default
-</button>
-
-
-
-</div>
-
-
-
-</div>
-
-
-
-</main>
-
-
-);
-
-
+        <div
+          className="
+            mt-6
+            rounded-xl
+            bg-blue-50/50
+            dark:bg-blue-900/10
+            border-2
+            border-blue-100/50
+            dark:border-blue-900/30
+            p-4
+          "
+        >
+          <p
+            className="
+              text-sm
+              text-blue-600/70
+              dark:text-slate-400
+            "
+          >
+            💡 Your theme preference will be saved automatically and applied
+            across the entire application.
+          </p>
+        </div>
+      </div>
+    </main>
+  );
 }

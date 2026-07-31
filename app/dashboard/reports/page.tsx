@@ -5,465 +5,225 @@ import TopProducts from "@/components/dashboard/top-products";
 import RecentSales from "@/components/dashboard/recent-sales";
 import LowStock from "@/components/dashboard/low-stock";
 
-
 import {
   Wallet,
   ShoppingCart,
   Package,
   TrendingUp,
+  BarChart3,
+  Calendar,
 } from "lucide-react";
-
-
-
-
 
 // =====================================
 // GET REPORT STATS
 // =====================================
 
-
-async function getReports(){
-
-
-  try{
-
-
+async function getReports() {
+  try {
     const res = await fetch(
-
       "http://localhost:3000/api/dashboard/stats",
-
       {
-        cache:"no-store",
+        cache: "no-store",
       }
-
     );
-
-
 
     const data = await res.json();
 
-
-
-    if(data.success){
-
+    if (data.success) {
       return data.stats;
-
     }
 
-
     return null;
-
-
-
-  }catch(error){
-
-
+  } catch (error) {
     console.log(
       "Reports stats error:",
       error
     );
-
-
     return null;
-
-
   }
-
-
 }
-
-
-
-
-
-
-
-
 
 // =====================================
 // GET PRODUCTS
 // =====================================
 
-
-async function getProducts(){
-
-
-  try{
-
-
+async function getProducts() {
+  try {
     const res = await fetch(
-
       "http://localhost:3000/api/products",
-
       {
-        cache:"no-store",
+        cache: "no-store",
       }
-
     );
 
+    const data = await res.json();
 
-
-    const data =
-      await res.json();
-
-
-
-
-    if(data.success){
-
+    if (data.success) {
       return data.products || [];
-
     }
 
-
-
-
     return [];
-
-
-
-
-  }catch(error){
-
-
+  } catch (error) {
     console.log(
       "Products fetch error:",
       error
     );
-
-
     return [];
-
   }
-
-
 }
-
-
-
-
-
-
-
-
-
-
 
 // =====================================
 // REPORT PAGE
 // =====================================
 
-
-export default async function ReportsPage(){
-
-
-
-  const [
-
-    statsData,
-
-    products
-
-  ] = await Promise.all([
-
+export default async function ReportsPage() {
+  const [statsData, products] = await Promise.all([
     getReports(),
-
     getProducts()
-
   ]);
 
-
-
-
-
-
-
-
   const cards = [
-
-
     {
-
-      title:"Today's Revenue",
-
-      value:
-
-      `LKR ${
-        (
-          statsData?.todayRevenue ?? 0
-        )
-        .toLocaleString("en-LK")
-      }`,
-
-      icon:Wallet,
-
-      description:"Revenue today"
-
+      title: "Today's Revenue",
+      value: `LKR ${(statsData?.todayRevenue ?? 0).toLocaleString("en-LK")}`,
+      icon: Wallet,
+      description: "Revenue today",
+      trend: "+12.5%",
+      trendUp: true,
+      color: "from-emerald-500 to-emerald-600 dark:from-emerald-400 dark:to-emerald-500",
     },
-
-
-
-
     {
-
-      title:"Today's Orders",
-
-      value:
-
-      String(
-        statsData?.todayOrders ?? 0
-      ),
-
-      icon:ShoppingCart,
-
-      description:"Orders completed"
-
+      title: "Today's Orders",
+      value: String(statsData?.todayOrders ?? 0),
+      icon: ShoppingCart,
+      description: "Orders completed",
+      trend: "+8.3%",
+      trendUp: true,
+      color: "from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500",
     },
-
-
-
-
-
     {
-
-      title:"Total Products",
-
-      value:
-
-      String(
-        statsData?.totalProducts ?? 0
-      ),
-
-      icon:Package,
-
-      description:"Inventory items"
-
+      title: "Total Products",
+      value: String(statsData?.totalProducts ?? 0),
+      icon: Package,
+      description: "Inventory items",
+      trend: "+2.1%",
+      trendUp: true,
+      color: "from-purple-500 to-purple-600 dark:from-purple-400 dark:to-purple-500",
     },
-
-
-
-
-
     {
-
-      title:"Low Stock",
-
-      value:
-
-      String(
-        statsData?.lowStockProducts ?? 0
-      ),
-
-      icon:TrendingUp,
-
-      description:"Need restock"
-
+      title: "Low Stock",
+      value: String(statsData?.lowStockProducts ?? 0),
+      icon: TrendingUp,
+      description: "Need restock",
+      trend: "-5.0%",
+      trendUp: false,
+      color: "from-red-500 to-red-600 dark:from-red-400 dark:to-red-500",
     }
-
-
   ];
 
-
-
-
-
-
-
-
-return (
-
-
-<main
-
-
-className="
-min-h-screen
-space-y-8
-rounded-3xl
-bg-muted/30
-p-6
-"
-
-
->
-
-
-
-
-
-<div>
-
-
-<h1
-
-className="
-text-3xl
-font-bold
-"
-
->
-
-Reports
-
-</h1>
-
-
-
-<p
-
-className="
-text-muted-foreground
-"
-
->
-
-Business reports and analytics
-
-</p>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div
-
-
-className="
-grid
-gap-6
-md:grid-cols-2
-xl:grid-cols-4
-"
-
-
->
-
-
-{
-
-cards.map((card)=>(
-
-
-<StatsCard
-
-
-key={card.title}
-
-
-title={card.title}
-
-
-value={card.value}
-
-
-icon={card.icon}
-
-
-description={card.description}
-
-
-/>
-
-
-))
-
-
-}
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div
-
-
-className="
-grid
-gap-6
-lg:grid-cols-2
-"
-
-
->
-
-
-<RevenueChart />
-
-
-<SalesChart />
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div
-
-
-className="
-grid
-gap-6
-lg:grid-cols-2
-"
-
-
->
-
-
-<RecentSales />
-
-
-
-<LowStock
-
-products={products}
-
-/>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-<TopProducts />
-
-
-
-
-
-
-
-</main>
-
-
-);
-
-
+  return (
+    <main
+      className="
+        min-h-screen
+        bg-gradient-to-br
+        from-blue-50/50
+        via-white
+        to-blue-100/30
+        dark:from-slate-900
+        dark:via-slate-800
+        dark:to-blue-950/50
+        p-6
+        space-y-8
+        transition-colors
+        duration-300
+      "
+    >
+      {/* Header */}
+      <div>
+        <h1
+          className="
+            text-4xl
+            font-bold
+            bg-gradient-to-r
+            from-blue-600
+            to-blue-800
+            dark:from-white
+            dark:to-blue-200
+            bg-clip-text
+            text-transparent
+          "
+        >
+          Reports
+        </h1>
+        <p
+          className="
+            text-blue-600/70
+            dark:text-slate-400
+            mt-1
+            flex
+            items-center
+            gap-2
+          "
+        >
+          <Calendar className="w-4 h-4" />
+          Business reports and analytics for {new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </p>
+      </div>
+
+      {/* Stats Cards */}
+      <div
+        className="
+          grid
+          gap-6
+          md:grid-cols-2
+          xl:grid-cols-4
+        "
+      >
+        {cards.map((card) => (
+          <StatsCard
+            key={card.title}
+            title={card.title}
+            value={card.value}
+            icon={card.icon}
+            description={card.description}
+            trend={card.trend}
+            trendUp={card.trendUp}
+            color={card.color}
+          />
+        ))}
+      </div>
+
+      {/* Charts */}
+      <div
+        className="
+          grid
+          gap-6
+          lg:grid-cols-2
+        "
+      >
+        <RevenueChart />
+        <SalesChart />
+      </div>
+
+      {/* Recent Sales & Low Stock */}
+      <div
+        className="
+          grid
+          gap-6
+          lg:grid-cols-2
+        "
+      >
+        <RecentSales />
+        <LowStock products={products} />
+      </div>
+
+      {/* Top Products */}
+      <TopProducts />
+    </main>
+  );
 }

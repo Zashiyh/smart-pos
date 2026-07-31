@@ -12,400 +12,240 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-
-
 interface Product {
-
-  _id:string;
-
-  name:string;
-
-  stock:number;
-
-  minStock:number;
-
+  _id: string;
+  name: string;
+  stock: number;
+  minStock: number;
 }
-
-
 
 interface LowStockProps {
-
-  products:Product[];
-
+  products: Product[];
 }
-
-
-
-
 
 export default function LowStock({
-
-products
-
-}:LowStockProps){
-
-
-
-const lowStockProducts = products.filter(
-
-(product)=>
-
-product.stock <= product.minStock
-
-);
-
-
-
-
-
-
-return (
-
-
-<Card
-
-className="
-rounded-2xl
-border
-bg-card/80
-backdrop-blur-xl
-shadow-sm
-"
-
->
-
-
-<CardHeader>
-
-
-<div
-
-className="
-flex
-items-center
-gap-3
-"
-
->
-
-
-<div
-
-className="
-flex
-h-10
-w-10
-items-center
-justify-center
-rounded-xl
-bg-red-500/10
-"
-
->
-
-
-<AlertTriangle
-
-className="
-h-5
-w-5
-text-red-500
-"
-
-/>
-
-
-</div>
-
-
-
-
-<div>
-
-
-<CardTitle>
-
-Low Stock Alert
-
-</CardTitle>
-
-
-<p
-
-className="
-text-sm
-text-muted-foreground
-"
-
->
-
-Products need restocking
-
-</p>
-
-
-</div>
-
-
-
-</div>
-
-
-</CardHeader>
-
-
-
-
-
-
-
-
-<CardContent>
-
-
-<div
-
-className="
-space-y-4
-"
-
->
-
-
-{
-
-lowStockProducts.length === 0 ?
-
-
-
-(
-
-<div
-
-className="
-flex
-items-center
-gap-3
-rounded-xl
-border
-p-4
-"
-
->
-
-
-<Package
-
-className="
-h-5
-w-5
-text-green-500
-"
-
-/>
-
-
-<p
-
-className="
-text-sm
-text-muted-foreground
-"
-
->
-
-All products have enough stock 🎉
-
-</p>
-
-
-</div>
-
-)
-
-
-
-:
-
-
-lowStockProducts.map(
-
-(product)=>(
-
-
-<div
-
-key={product._id}
-
-className="
-flex
-items-center
-justify-between
-rounded-xl
-border
-p-4
-transition
-hover:bg-muted/40
-"
-
->
-
-
-
-<div
-
-className="
-flex
-items-center
-gap-3
-"
-
->
-
-
-
-<div
-
-className="
-flex
-h-10
-w-10
-items-center
-justify-center
-rounded-xl
-bg-primary/10
-"
-
->
-
-
-<Package
-
-className="
-h-5
-w-5
-text-primary
-"
-
-/>
-
-
-</div>
-
-
-
-
-
-
-
-<div>
-
-
-<p
-
-className="
-font-medium
-"
-
->
-
-{product.name}
-
-</p>
-
-
-
-<p
-
-className="
-text-sm
-text-muted-foreground
-"
-
->
-
-Minimum Stock: {product.minStock}
-
-</p>
-
-
-
-</div>
-
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div
-
-className="
-text-right
-"
-
->
-
-
-<span
-
-className="
-rounded-full
-bg-red-500/10
-px-3
-py-1
-text-xs
-font-medium
-text-red-600
-"
-
->
-
-{product.stock} left
-
-</span>
-
-
-</div>
-
-
-
-
-
-
-
-</div>
-
-
-)
-
-
-)
-
-
-
-}
-
-
-
-</div>
-
-
-
-</CardContent>
-
-
-</Card>
-
-
-);
-
-
+  products
+}: LowStockProps) {
+  const lowStockProducts = products.filter(
+    (product) =>
+      product.stock <= product.minStock
+  );
+
+  return (
+    <Card
+      className="
+        rounded-2xl
+        border-0
+        shadow-sm
+        hover:shadow-lg
+        transition-all
+        duration-300
+        bg-white
+        dark:bg-slate-800/90
+        backdrop-blur-sm
+      "
+    >
+      <CardHeader className="border-b border-blue-100/50 dark:border-blue-900/30 pb-4">
+        <div
+          className="
+            flex
+            items-center
+            gap-3
+          "
+        >
+          <div
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-xl
+              bg-red-100
+              dark:bg-red-900/30
+              transition-colors
+              duration-300
+            "
+          >
+            <AlertTriangle
+              className="
+                h-5
+                w-5
+                text-red-600
+                dark:text-red-400
+              "
+            />
+          </div>
+
+          <div>
+            <CardTitle
+              className="
+                text-blue-900
+                dark:text-white
+                text-lg
+                font-semibold
+              "
+            >
+              Low Stock Alert
+            </CardTitle>
+            <p
+              className="
+                text-sm
+                text-blue-600/70
+                dark:text-slate-400
+              "
+            >
+              Products need restocking
+            </p>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="pt-6">
+        <div
+          className="
+            space-y-3
+          "
+        >
+          {lowStockProducts.length === 0 ? (
+            <div
+              className="
+                flex
+                items-center
+                gap-3
+                rounded-xl
+                border-2
+                border-emerald-200
+                dark:border-emerald-900/30
+                p-4
+                bg-emerald-50/50
+                dark:bg-emerald-900/10
+                transition-colors
+                duration-300
+              "
+            >
+              <Package
+                className="
+                  h-5
+                  w-5
+                  text-emerald-600
+                  dark:text-emerald-400
+                "
+              />
+              <p
+                className="
+                  text-sm
+                  text-emerald-700
+                  dark:text-emerald-400
+                  font-medium
+                "
+              >
+                All products have enough stock 🎉
+              </p>
+            </div>
+          ) : (
+            lowStockProducts.map((product) => (
+              <div
+                key={product._id}
+                className="
+                  flex
+                  items-center
+                  justify-between
+                  rounded-xl
+                  border-2
+                  border-red-200
+                  dark:border-red-900/30
+                  p-4
+                  transition-all
+                  duration-300
+                  hover:shadow-md
+                  bg-red-50/30
+                  dark:bg-red-900/5
+                  hover:bg-red-100/50
+                  dark:hover:bg-red-900/20
+                "
+              >
+                <div
+                  className="
+                    flex
+                    items-center
+                    gap-3
+                  "
+                >
+                  <div
+                    className="
+                      flex
+                      h-10
+                      w-10
+                      items-center
+                      justify-center
+                      rounded-xl
+                      bg-red-100
+                      dark:bg-red-900/30
+                      transition-colors
+                      duration-300
+                    "
+                  >
+                    <Package
+                      className="
+                        h-5
+                        w-5
+                        text-red-600
+                        dark:text-red-400
+                      "
+                    />
+                  </div>
+
+                  <div>
+                    <p
+                      className="
+                        font-medium
+                        text-blue-900
+                        dark:text-white
+                      "
+                    >
+                      {product.name}
+                    </p>
+                    <p
+                      className="
+                        text-sm
+                        text-blue-600/70
+                        dark:text-slate-400
+                      "
+                    >
+                      Minimum Stock: {product.minStock}
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  className="
+                    text-right
+                  "
+                >
+                  <span
+                    className="
+                      rounded-full
+                      bg-red-100
+                      dark:bg-red-900/30
+                      px-3
+                      py-1
+                      text-xs
+                      font-medium
+                      text-red-700
+                      dark:text-red-400
+                      transition-colors
+                      duration-300
+                    "
+                  >
+                    {product.stock} left
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
 }

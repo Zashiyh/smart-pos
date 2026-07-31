@@ -1,92 +1,406 @@
 import {
   ShieldCheck,
+  Lock,
+  Key,
+  Smartphone,
+  Monitor,
+  ChevronRight,
 } from "lucide-react";
 
+import Link from "next/link";
 
-export default function SecuritySettingsPage(){
+export default function SecuritySettingsPage() {
+  return (
+    <main
+      className="
+        min-h-screen
+        bg-gradient-to-br
+        from-blue-50/50
+        via-white
+        to-blue-100/30
+        dark:from-slate-900
+        dark:via-slate-800
+        dark:to-blue-950/50
+        p-6
+        space-y-8
+        transition-colors
+        duration-300
+      "
+    >
+      {/* Header */}
+      <div>
+        <h1
+          className="
+            text-4xl
+            font-bold
+            bg-gradient-to-r
+            from-blue-600
+            to-blue-800
+            dark:from-white
+            dark:to-blue-200
+            bg-clip-text
+            text-transparent
+          "
+        >
+          Security
+        </h1>
+        <p
+          className="
+            text-blue-600/70
+            dark:text-slate-400
+            mt-1
+          "
+        >
+          Manage account security settings
+        </p>
+      </div>
 
+      {/* Security Options */}
+      <div
+        className="
+          rounded-2xl
+          border-0
+          shadow-sm
+          hover:shadow-lg
+          transition-all
+          duration-300
+          bg-white
+          dark:bg-slate-800/90
+          backdrop-blur-sm
+          border-blue-100/50
+          dark:border-blue-900/30
+          p-6
+        "
+      >
+        <div className="flex items-center gap-3 border-b border-blue-100/50 dark:border-blue-900/30 pb-4">
+          <div
+            className="
+              rounded-xl
+              bg-blue-100
+              dark:bg-blue-900/30
+              p-3
+              transition-colors
+              duration-300
+            "
+          >
+            <ShieldCheck
+              className="
+                h-6
+                w-6
+                text-blue-600
+                dark:text-blue-400
+              "
+            />
+          </div>
+          <div>
+            <h2
+              className="
+                text-xl
+                font-semibold
+                text-blue-900
+                dark:text-white
+              "
+            >
+              Security Options
+            </h2>
+            <p
+              className="
+                text-sm
+                text-blue-600/70
+                dark:text-slate-400
+              "
+            >
+              Protect your account with these security features
+            </p>
+          </div>
+        </div>
 
-return (
+        <div className="mt-5 space-y-3">
+          {/* Change Password */}
+          <Link
+            href="/dashboard/settings/security/password"
+            className="
+              group
+              flex
+              items-center
+              justify-between
+              rounded-xl
+              border-2
+              border-blue-100/50
+              dark:border-blue-900/30
+              p-4
+              hover:bg-blue-50/50
+              dark:hover:bg-slate-700/30
+              transition-all
+              duration-200
+              cursor-pointer
+            "
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="
+                  rounded-lg
+                  bg-blue-100
+                  dark:bg-blue-900/30
+                  p-2
+                  transition-colors
+                  duration-300
+                "
+              >
+                <Lock
+                  className="
+                    h-5
+                    w-5
+                    text-blue-600
+                    dark:text-blue-400
+                  "
+                />
+              </div>
+              <div>
+                <h3
+                  className="
+                    font-medium
+                    text-blue-900
+                    dark:text-white
+                  "
+                >
+                  Change Password
+                </h3>
+                <p
+                  className="
+                    text-sm
+                    text-blue-500/60
+                    dark:text-slate-400
+                  "
+                >
+                  Update your account password
+                </p>
+              </div>
+            </div>
+            <ChevronRight
+              className="
+                h-5
+                w-5
+                text-blue-300
+                dark:text-slate-600
+                group-hover:text-blue-500
+                dark:group-hover:text-blue-400
+                group-hover:translate-x-1
+                transition-all
+                duration-300
+              "
+            />
+          </Link>
 
-<main
+          {/* Two Factor Authentication */}
+          <div
+            className="
+              group
+              flex
+              items-center
+              justify-between
+              rounded-xl
+              border-2
+              border-blue-100/50
+              dark:border-blue-900/30
+              p-4
+              hover:bg-blue-50/50
+              dark:hover:bg-slate-700/30
+              transition-all
+              duration-200
+              cursor-pointer
+            "
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="
+                  rounded-lg
+                  bg-blue-100
+                  dark:bg-blue-900/30
+                  p-2
+                  transition-colors
+                  duration-300
+                "
+              >
+                <Smartphone
+                  className="
+                    h-5
+                    w-5
+                    text-blue-600
+                    dark:text-blue-400
+                  "
+                />
+              </div>
+              <div>
+                <h3
+                  className="
+                    font-medium
+                    text-blue-900
+                    dark:text-white
+                  "
+                >
+                  Two Factor Authentication
+                </h3>
+                <p
+                  className="
+                    text-sm
+                    text-blue-500/60
+                    dark:text-slate-400
+                  "
+                >
+                  Add an extra layer of security
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span
+                className="
+                  text-xs
+                  font-medium
+                  text-emerald-600
+                  dark:text-emerald-400
+                  bg-emerald-50
+                  dark:bg-emerald-900/20
+                  px-2
+                  py-1
+                  rounded-full
+                "
+              >
+                Coming Soon
+              </span>
+              <ChevronRight
+                className="
+                  h-5
+                  w-5
+                  text-blue-300
+                  dark:text-slate-600
+                  group-hover:text-blue-500
+                  dark:group-hover:text-blue-400
+                  group-hover:translate-x-1
+                  transition-all
+                  duration-300
+                "
+              />
+            </div>
+          </div>
 
-className="
-min-h-screen
-space-y-6
-rounded-3xl
-bg-muted/30
-p-6
-"
+          {/* Active Sessions */}
+          <div
+            className="
+              group
+              flex
+              items-center
+              justify-between
+              rounded-xl
+              border-2
+              border-blue-100/50
+              dark:border-blue-900/30
+              p-4
+              hover:bg-blue-50/50
+              dark:hover:bg-slate-700/30
+              transition-all
+              duration-200
+              cursor-pointer
+            "
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="
+                  rounded-lg
+                  bg-blue-100
+                  dark:bg-blue-900/30
+                  p-2
+                  transition-colors
+                  duration-300
+                "
+              >
+                <Monitor
+                  className="
+                    h-5
+                    w-5
+                    text-blue-600
+                    dark:text-blue-400
+                  "
+                />
+              </div>
+              <div>
+                <h3
+                  className="
+                    font-medium
+                    text-blue-900
+                    dark:text-white
+                  "
+                >
+                  Active Sessions
+                </h3>
+                <p
+                  className="
+                    text-sm
+                    text-blue-500/60
+                    dark:text-slate-400
+                  "
+                >
+                  Manage devices logged into your account
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span
+                className="
+                  text-xs
+                  font-medium
+                  text-blue-600
+                  dark:text-blue-400
+                  bg-blue-50
+                  dark:bg-blue-900/20
+                  px-2
+                  py-1
+                  rounded-full
+                "
+              >
+                2 active
+              </span>
+              <ChevronRight
+                className="
+                  h-5
+                  w-5
+                  text-blue-300
+                  dark:text-slate-600
+                  group-hover:text-blue-500
+                  dark:group-hover:text-blue-400
+                  group-hover:translate-x-1
+                  transition-all
+                  duration-300
+                "
+              />
+            </div>
+          </div>
+        </div>
 
->
-
-
-<h1 className="text-3xl font-bold">
-Security
-</h1>
-
-
-<p className="text-muted-foreground">
-Manage account security settings
-</p>
-
-
-
-
-
-<div
-
-className="
-rounded-2xl
-border
-bg-background
-p-6
-"
-
->
-
-
-<div className="flex gap-3 items-center">
-
-<ShieldCheck className="text-primary"/>
-
-<h2 className="font-semibold">
-Security Options
-</h2>
-
-
-</div>
-
-
-
-
-<ul className="mt-5 space-y-3 text-sm">
-
-<li>
-• Change Password
-</li>
-
-<li>
-• Two Factor Authentication
-</li>
-
-<li>
-• Active Sessions
-</li>
-
-
-</ul>
-
-
-
-</div>
-
-
-
-</main>
-
-
-);
-
-
+        <div
+          className="
+            mt-6
+            rounded-xl
+            bg-blue-50/50
+            dark:bg-blue-900/10
+            border-2
+            border-blue-100/50
+            dark:border-blue-900/30
+            p-4
+          "
+        >
+          <p
+            className="
+              text-sm
+              text-blue-600/70
+              dark:text-slate-400
+            "
+          >
+            🔒 Your security is our priority. We recommend enabling two-factor
+            authentication and regularly updating your password.
+          </p>
+        </div>
+      </div>
+    </main>
+  );
 }
