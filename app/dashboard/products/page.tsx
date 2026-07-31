@@ -1,4 +1,5 @@
 import ProductTable from "@/components/products/product-table";
+import ProductForm from "@/components/products/product-form";
 
 
 interface Product {
@@ -28,16 +29,14 @@ async function getProducts(): Promise<Product[]> {
     const response = await fetch(
       "http://localhost:3000/api/products",
       {
-        cache: "no-store",
+        cache:"no-store",
       }
     );
 
 
 
-    const data = await response.json();
-
-
-    console.log("PRODUCT DATA:", data);
+    const data =
+      await response.json();
 
 
 
@@ -52,7 +51,7 @@ async function getProducts(): Promise<Product[]> {
 
 
 
-  } catch(error){
+  }catch(error){
 
 
     console.log(
@@ -73,83 +72,165 @@ async function getProducts(): Promise<Product[]> {
 
 
 
+
+
 export default async function ProductsPage(){
 
 
-
-  const products =
-    await getProducts();
-
+const products =
+await getProducts();
 
 
 
-  return (
+
+return (
 
 
-    <main
+<main
 
-      className="
-      min-h-screen
-      rounded-3xl
-      bg-muted/30
-      p-6
-      space-y-6
-      "
+className="
+min-h-screen
+rounded-3xl
+bg-muted/30
+p-6
+space-y-8
+"
 
-    >
-
-
-
-      <div>
-
-
-        <h1
-
-          className="
-          text-3xl
-          font-bold
-          "
-
-        >
-
-          Products
-
-        </h1>
-
-
-
-        <p
-
-          className="
-          text-muted-foreground
-          "
-
-        >
-
-          Manage inventory products
-
-        </p>
-
-
-      </div>
+>
 
 
 
 
 
-      <ProductTable
+{/* HEADER */}
 
-        products={products}
-
-      />
+<div>
 
 
+<h1
+
+className="
+text-3xl
+font-bold
+"
+
+>
+
+Products
+
+</h1>
 
 
 
-    </main>
+<p
+
+className="
+text-muted-foreground
+"
+
+>
+
+Manage inventory products
+
+</p>
 
 
-  );
+</div>
+
+
+
+
+
+
+
+{/* ADD PRODUCT SECTION */}
+
+
+<section
+
+className="
+rounded-2xl
+border
+bg-background
+p-6
+shadow-sm
+"
+
+>
+
+
+<div className="mb-4">
+
+
+<h2
+
+className="
+text-xl
+font-semibold
+"
+
+>
+
+Add Product
+
+</h2>
+
+
+<p
+
+className="
+text-sm
+text-muted-foreground
+"
+
+>
+
+Create new inventory product
+
+</p>
+
+
+</div>
+
+
+
+<ProductForm />
+
+
+
+</section>
+
+
+
+
+
+
+
+{/* PRODUCT TABLE */}
+
+
+<section>
+
+
+<ProductTable
+
+products={products}
+
+/>
+
+
+</section>
+
+
+
+
+
+
+
+</main>
+
+
+);
+
 
 }

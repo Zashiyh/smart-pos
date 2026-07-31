@@ -17,35 +17,45 @@ import {
 } from "@/components/ui/card";
 
 
+import EditProductDialog from "./edit-product-dialog";
+
+import DeleteProductButton from "./delete-dialog";
+
+
+
+
 
 interface Product {
 
-  _id: string;
+  _id:string;
 
-  name: string;
+  name:string;
 
-  barcode?: string;
+  barcode:string;
 
-  sku?: string;
+  sku:string;
 
-  category?: string;
+  category:string;
 
-  brand?: string;
+  brand:string;
 
-  stock: number;
+  supplier:string;
 
-  sellingPrice: number;
+  costPrice:number;
 
-  status?: string;
+  sellingPrice:number;
+
+  stock:number;
 
 }
 
 
 
 
+
 interface ProductTableProps {
 
-  products: Product[];
+  products:Product[];
 
 }
 
@@ -74,421 +84,491 @@ const categories = [
 
 export default function ProductTable({
 
-  products,
+products
 
-}: ProductTableProps) {
+}:ProductTableProps){
 
 
 
-  const [search,setSearch] =
-    useState("");
+const [search,setSearch] =
+useState("");
 
 
 
-  const [category,setCategory] =
-    useState("All");
+const [category,setCategory] =
+useState("All");
 
 
 
 
 
 
-  const filteredProducts =
-    products.filter((product)=>{
 
+const filteredProducts =
 
+products.filter((product)=>{
 
-      const searchMatch =
-        product.name
-        .toLowerCase()
-        .includes(
-          search.toLowerCase()
-        );
 
+const searchMatch =
 
+product.name
+.toLowerCase()
+.includes(
+search.toLowerCase()
+);
 
 
-      const categoryMatch =
-        category === "All" ||
-        product.category === category;
 
 
+const categoryMatch =
 
+category === "All" ||
 
-      return (
-        searchMatch &&
-        categoryMatch
-      );
+product.category === category;
 
 
-    });
 
 
+return searchMatch && categoryMatch;
 
 
 
+});
 
 
-  return (
 
 
-    <Card
-      className="
-      rounded-2xl
-      "
-    >
 
 
-      <CardContent
-        className="
-        p-6
-        "
-      >
 
+return (
 
 
+<Card className="rounded-2xl">
 
 
-        <div
+<CardContent className="p-6">
 
-          className="
-          mb-6
-          flex
-          flex-col
-          gap-4
-          md:flex-row
-          "
 
-        >
 
 
 
-          <input
 
 
-            placeholder="Search product..."
+<div
 
+className="
+mb-6
+flex
+flex-col
+gap-4
+md:flex-row
+"
 
-            value={search}
+>
 
 
-            onChange={(e)=>
-              setSearch(e.target.value)
-            }
 
+<input
 
-            className="
-            h-10
-            rounded-xl
-            border
-            bg-background
-            px-4
-            outline-none
-            "
+placeholder="Search product..."
 
+value={search}
 
-          />
+onChange={(e)=>
 
+setSearch(e.target.value)
 
+}
 
+className="
+h-10
+rounded-xl
+border
+bg-background
+px-4
+outline-none
+"
 
+/>
 
 
 
-          <select
 
 
-            value={category}
 
 
-            onChange={(e)=>
-              setCategory(e.target.value)
-            }
 
+<select
 
-            className="
-            h-10
-            rounded-xl
-            border
-            bg-background
-            px-4
-            "
+value={category}
 
+onChange={(e)=>
 
-          >
+setCategory(e.target.value)
 
+}
 
-            {
-              categories.map((cat)=>(
+className="
+h-10
+rounded-xl
+border
+bg-background
+px-4
+"
 
+>
 
-                <option
 
-                  key={cat}
 
-                  value={cat}
+{
 
-                >
+categories.map((cat)=>(
 
-                  {cat}
 
+<option
 
-                </option>
+key={cat}
 
+value={cat}
 
-              ))
-            }
+>
 
+{cat}
 
+</option>
 
-          </select>
 
+))
 
 
+}
 
-        </div>
 
 
+</select>
 
 
 
+</div>
 
 
 
 
-        <div className="overflow-x-auto">
 
 
 
-          <Table>
 
 
-            <TableHeader>
+<div className="overflow-x-auto">
 
 
-              <TableRow>
 
+<Table>
 
-                <TableHead>
-                  Product
-                </TableHead>
 
 
-                <TableHead>
-                  Category
-                </TableHead>
 
 
-                <TableHead>
-                  Brand
-                </TableHead>
+<TableHeader>
 
 
-                <TableHead>
-                  Stock
-                </TableHead>
+<TableRow>
 
 
-                <TableHead>
-                  Price
-                </TableHead>
 
+<TableHead>
+Product
+</TableHead>
 
-              </TableRow>
 
 
-            </TableHeader>
+<TableHead>
+Category
+</TableHead>
 
 
 
+<TableHead>
+Brand
+</TableHead>
 
 
 
+<TableHead>
+Stock
+</TableHead>
 
-            <TableBody>
 
 
+<TableHead>
+Price
+</TableHead>
 
-              {
-                filteredProducts.length === 0 ?
 
 
-                (
+<TableHead className="text-right">
 
-                  <TableRow>
+Actions
 
+</TableHead>
 
-                    <TableCell
 
-                      colSpan={5}
 
-                      className="
-                      text-center
-                      "
+</TableRow>
 
-                    >
 
-                      No products found
+</TableHeader>
 
 
-                    </TableCell>
 
 
-                  </TableRow>
 
 
-                )
 
 
 
-                :
+<TableBody>
 
 
 
-                filteredProducts.map((product)=>(
+{
 
+filteredProducts.length === 0 ?
 
 
-                  <TableRow
 
-                    key={product._id}
+<TableRow>
 
-                  >
 
+<TableCell
 
+colSpan={6}
 
-                    <TableCell
+className="text-center"
 
-                      className="
-                      font-medium
-                      "
+>
 
-                    >
+No products found
 
-                      {product.name}
+</TableCell>
 
 
-                    </TableCell>
+</TableRow>
 
 
 
 
 
-                    <TableCell>
+:
 
-                      {product.category || "-"}
 
 
-                    </TableCell>
 
 
+filteredProducts.map((product)=>(
 
 
 
-                    <TableCell>
+<TableRow
 
-                      {product.brand || "-"}
+key={product._id}
 
+>
 
-                    </TableCell>
 
 
 
 
+<TableCell
 
-                    <TableCell>
+className="font-medium"
 
+>
 
-                      <span
+{product.name}
 
-                        className={`
-                        rounded-full
-                        px-3
-                        py-1
-                        text-xs
+</TableCell>
 
-                        ${
-                          product.stock <= 10
 
-                          ?
 
-                          "bg-red-500/10 text-red-600"
 
-                          :
 
-                          "bg-green-500/10 text-green-600"
 
-                        }
 
-                        `}
+<TableCell>
 
-                      >
+{product.category}
 
-                        {product.stock}
+</TableCell>
 
 
-                      </span>
 
 
-                    </TableCell>
 
 
 
+<TableCell>
 
+{product.brand}
 
+</TableCell>
 
 
-                    <TableCell>
 
 
-                      LKR{" "}
 
-                      {Number(
-                        product.sellingPrice
-                      ).toLocaleString("en-LK")}
 
 
+<TableCell>
 
-                    </TableCell>
 
+<span
 
+className={`
 
+rounded-full
 
+px-3
 
-                  </TableRow>
+py-1
 
+text-xs
 
 
-                ))
+${
+product.stock <= 10
 
+?
 
-              }
+"bg-red-500/10 text-red-600"
 
+:
 
+"bg-green-500/10 text-green-600"
 
+}
 
-            </TableBody>
 
+`}
 
+>
 
-          </Table>
 
+{product.stock}
 
 
+</span>
 
-        </div>
 
+</TableCell>
 
 
 
-      </CardContent>
 
 
 
-    </Card>
 
 
-  );
+
+<TableCell>
+
+
+LKR {product.sellingPrice.toLocaleString("en-LK")}
+
+
+</TableCell>
+
+
+
+
+
+
+
+
+
+<TableCell>
+
+
+<div
+
+className="
+flex
+justify-end
+gap-2
+"
+
+>
+
+
+<EditProductDialog
+
+product={product}
+
+/>
+
+
+
+
+
+<DeleteProductButton
+
+id={product._id}
+
+/>
+
+
+
+
+</div>
+
+
+</TableCell>
+
+
+
+
+
+
+
+</TableRow>
+
+
+
+))
+
+
+}
+
+
+
+</TableBody>
+
+
+
+
+
+
+
+</Table>
+
+
+
+</div>
+
+
+
+
+
+
+
+</CardContent>
+
+
+</Card>
+
+
+);
 
 
 }
