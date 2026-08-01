@@ -1,6 +1,7 @@
 import ProductTable from "@/components/products/product-table";
 import ProductForm from "@/components/products/product-form";
 
+export const dynamic = "force-dynamic";
 interface Product {
   _id: string;
   name: string;

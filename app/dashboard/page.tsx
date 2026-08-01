@@ -20,9 +20,9 @@ import {
 } from "lucide-react";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ??
-  "http://localhost:3000";
-
+  process.env.NEXT_PUBLIC_API_URL ||
+  "";
+export const dynamic = "force-dynamic";
 // =================================
 // GET PRODUCTS
 // =================================
@@ -30,11 +30,11 @@ const API_URL =
 async function getProducts() {
   try {
     const res = await fetch(
-      "http://localhost:3000/api/products",
-      {
-        cache: "no-store",
-      }
-    );
+  `${API_URL}/api/dashboard/stats`,
+  {
+    cache:"no-store",
+  }
+);
 
     const text = await res.text();
 

@@ -13,19 +13,24 @@ import {
   BarChart3,
   Calendar,
 } from "lucide-react";
-
+export const dynamic = "force-dynamic";
 // =====================================
 // GET REPORT STATS
 // =====================================
 
 async function getReports() {
   try {
-    const res = await fetch(
-      "http://localhost:3000/api/dashboard/stats",
-      {
-        cache: "no-store",
-      }
-    );
+   const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:3000";
+
+
+const res = await fetch(
+  `${API_URL}/api/dashboard/stats`,
+  {
+    cache:"no-store",
+  }
+);
 
     const data = await res.json();
 
