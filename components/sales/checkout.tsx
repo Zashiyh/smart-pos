@@ -82,9 +82,9 @@ export default function Checkout({
         onSuccess();
       }
 
-      router.push(
-        `/dashboard/invoices/${data.sale._id}`
-      );
+     router.push(
+  `/invoices/${data.sale._id}`
+);
     } catch (error) {
       console.error(error);
       alert("Sale failed.");
