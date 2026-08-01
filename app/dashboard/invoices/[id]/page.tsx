@@ -1,31 +1,54 @@
 import Link from "next/link";
+
 import PdfButton from "@/components/invoice/pdf-button";
-
-import {
- ArrowLeft
-} from "lucide-react";
-
-import {
- Button
-} from "@/components/ui/button";
-
-import {
- Card,
- CardContent,
- CardHeader,
- CardTitle
-} from "@/components/ui/card";
-
 import PrintButton from "@/components/invoice/print-button";
 
+
+import {
+ArrowLeft
+} from "lucide-react";
+
+
+import {
+Button
+} from "@/components/ui/button";
+
+
+import {
+Card,
+CardContent,
+CardHeader,
+CardTitle
+} from "@/components/ui/card";
+
+
+
+export const dynamic = "force-dynamic";
+
+
+
+const API_URL =
+process.env.NEXT_PUBLIC_API_URL ||
+"http://localhost:3000";
+
+
+
+
+
+// ===============================
+// GET INVOICE
+// ===============================
 
 
 async function getInvoice(id:string){
 
 
+try{
+
+
 const res = await fetch(
 
-`http://localhost:3000/api/sales/${id}`,
+`${API_URL}/api/sales/${id}`,
 
 {
 cache:"no-store"
@@ -34,7 +57,9 @@ cache:"no-store"
 );
 
 
+
 const data = await res.json();
+
 
 
 if(!data.success){
@@ -44,7 +69,25 @@ return null;
 }
 
 
+
 return data.sale;
+
+
+
+}catch(error){
+
+
+console.log(
+"Invoice error:",
+error
+);
+
+
+return null;
+
+
+}
+
 
 
 }
@@ -52,6 +95,10 @@ return data.sale;
 
 
 
+
+// ===============================
+// PAGE
+// ===============================
 
 
 export default async function InvoicePage({
@@ -70,8 +117,10 @@ id:string
 const {id}=await params;
 
 
+
 const invoice =
 await getInvoice(id);
+
 
 
 
@@ -84,12 +133,16 @@ return (
 <div className="p-6">
 
 <h1 className="text-xl font-bold">
+
 Invoice not found
+
 </h1>
+
 
 </div>
 
 );
+
 
 }
 
@@ -99,19 +152,20 @@ Invoice not found
 
 return (
 
+
 <main
+
 className="
-invoice-container
 min-h-screen
 space-y-6
 rounded-3xl
 bg-muted/30
 p-6
 "
+
 >
 
 
-{/* TOP ACTION */}
 
 <div
 
@@ -125,6 +179,7 @@ print:hidden
 >
 
 
+
 <Link href="/dashboard/invoices">
 
 
@@ -134,33 +189,33 @@ variant="outline"
 
 size="icon"
 
-className="
-rounded-xl
-no-print
-"
+className="rounded-xl"
 
 >
 
-<ArrowLeft />
+<ArrowLeft/>
 
 </Button>
 
 
 </Link>
 
-<div className="flex gap-3 no-print">
 
 
+<div className="flex gap-3">
 
-  <PdfButton />
+
+<PdfButton/>
+
+
+<PrintButton/>
+
 
 </div>
 
-<PrintButton />
 
 
 </div>
-
 
 
 
@@ -168,32 +223,31 @@ no-print
 
 
 <Card
-  id="invoice"
-  className="rounded-3xl"
+
+id="invoice"
+
+className="rounded-3xl"
+
 >
 
 
 <CardHeader>
 
 
-<div
-
-className="
+<div className="
 flex
 justify-between
-"
-
->
+">
 
 
 <div>
 
 
-<h1 className="text-3xl font-bold">
+<CardTitle className="text-3xl">
 
 SMARTPOS PRO
 
-</h1>
+</CardTitle>
 
 
 <p className="text-muted-foreground">
@@ -204,7 +258,6 @@ Smart Retail Management System
 
 
 </div>
-
 
 
 
@@ -228,6 +281,7 @@ INVOICE
 </div>
 
 
+
 </div>
 
 
@@ -237,36 +291,22 @@ INVOICE
 
 
 
-
-
-<CardContent
-
-className="space-y-6"
-
->
+<CardContent className="space-y-6">
 
 
 
-
-
-{/* CUSTOMER DETAILS */}
-
-
-<div
-
-className="
+<div className="
 grid
 md:grid-cols-2
 gap-4
 border
 rounded-xl
 p-4
-"
-
->
+">
 
 
 <div>
+
 
 <p className="text-sm text-muted-foreground">
 
@@ -286,9 +326,8 @@ Customer
 
 
 
-
-
 <div>
+
 
 <p className="text-sm text-muted-foreground">
 
@@ -313,7 +352,6 @@ invoice.createdAt
 </div>
 
 
-
 </div>
 
 
@@ -322,33 +360,16 @@ invoice.createdAt
 
 
 
-{/* PRODUCTS */}
-
-
-
 <div className="overflow-x-auto">
 
 
-<table
-
-className="
-w-full
-text-sm
-"
-
->
+<table className="w-full text-sm">
 
 
 <thead>
 
 
-<tr
-
-className="
-border-b
-"
-
->
+<tr className="border-b">
 
 
 <th className="p-3 text-left">
@@ -387,7 +408,6 @@ Total
 
 
 
-
 <tbody>
 
 
@@ -407,12 +427,11 @@ className="border-b"
 >
 
 
-<td className="p-3 font-medium">
+<td className="p-3">
 
 {item.name}
 
 </td>
-
 
 
 <td className="p-3 text-center">
@@ -422,19 +441,17 @@ className="border-b"
 </td>
 
 
-
 <td className="p-3 text-center">
 
-LKR{item.price}
+LKR {item.price}
 
 </td>
 
 
 
-
 <td className="p-3 text-center">
 
-LKR{item.subtotal}
+LKR {item.subtotal}
 
 </td>
 
@@ -454,6 +471,7 @@ LKR{item.subtotal}
 </tbody>
 
 
+
 </table>
 
 
@@ -464,163 +482,53 @@ LKR{item.subtotal}
 
 
 
-
-{/* SUMMARY */}
-
-
-
-<div
-
-className="
+<div className="
 ml-auto
 max-w-sm
 space-y-3
 border-t
 pt-5
-"
-
->
+">
 
 
 <div className="flex justify-between">
 
+<span>Total</span>
 
-<span>
+<span className="font-bold">
 
-Subtotal
-
-</span>
-
-
-<span>
-
-LKR{invoice.totalAmount}
+LKR {invoice.totalAmount}
 
 </span>
-
-
-</div>
-
-<div className="flex justify-between">
-
-
-<span>
-
-Cash Received
-
-</span>
-
-
-<span className="font-semibold">
-
-LKR{invoice.cashReceived ?? 0}
-
-</span>
-
 
 </div>
 
 
 
-
 <div className="flex justify-between">
 
+<span>Payment</span>
 
 <span>
-
-Change
-
-</span>
-
-
-<span className="font-semibold">
-
-LKR{invoice.change ?? 0}
-
-</span>
-
-
-</div>
-
-
-
-
-
-<div className="flex justify-between">
-
-
-<span>
-
-Payment
-
-</span>
-
-
-<span className="font-semibold">
 
 {invoice.paymentMethod}
 
 </span>
 
-
 </div>
-
-
 
 
 
 <div className="flex justify-between">
 
+<span>Status</span>
 
 <span>
-
-Status
-
-</span>
-
-
-<span className="font-semibold">
 
 {invoice.status}
 
 </span>
 
-
-</div>
-
-
-
-
-
-
-<div
-
-className="
-border-t
-pt-3
-text-2xl
-font-bold
-flex
-justify-between
-"
-
->
-
-
-<span>
-
-Total
-
-</span>
-
-
-<span>
-
-LKR{invoice.totalAmount}
-
-</span>
-
-
 </div>
 
 
@@ -631,18 +539,11 @@ LKR{invoice.totalAmount}
 
 
 
-
-
-<p
-
-className="
+<p className="
 text-center
 text-sm
 text-muted-foreground
-pt-6
-"
-
->
+">
 
 Thank you for shopping with SMARTPOS PRO
 
@@ -655,7 +556,6 @@ Thank you for shopping with SMARTPOS PRO
 
 
 </Card>
-
 
 
 </main>
