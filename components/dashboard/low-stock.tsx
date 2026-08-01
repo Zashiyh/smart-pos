@@ -16,7 +16,7 @@ interface Product {
   _id: string;
   name: string;
   stock: number;
-  minStock: number;
+  minStock?: number;
 }
 
 interface LowStockProps {
@@ -24,11 +24,16 @@ interface LowStockProps {
 }
 
 export default function LowStock({
-  products
+  products,
 }: LowStockProps) {
   const lowStockProducts = products.filter(
     (product) =>
-      product.stock <= product.minStock
+      product.stock <= (product.minStock ?? 10)
+  );
+
+  console.log(
+    "LOW STOCK PRODUCTS:",
+    lowStockProducts
   );
 
   return (
@@ -45,7 +50,14 @@ export default function LowStock({
         backdrop-blur-sm
       "
     >
-      <CardHeader className="border-b border-blue-100/50 dark:border-blue-900/30 pb-4">
+      <CardHeader
+        className="
+          border-b
+          border-blue-100/50
+          dark:border-blue-900/30
+          pb-4
+        "
+      >
         <div
           className="
             flex
@@ -102,49 +114,45 @@ export default function LowStock({
       </CardHeader>
 
       <CardContent className="pt-6">
-        <div
-          className="
-            space-y-3
-          "
-        >
-          {lowStockProducts.length === 0 ? (
-            <div
+        {lowStockProducts.length === 0 ? (
+          <div
+            className="
+              flex
+              items-center
+              gap-3
+              rounded-xl
+              border-2
+              border-emerald-200
+              dark:border-emerald-900/30
+              p-4
+              bg-emerald-50/50
+              dark:bg-emerald-900/10
+              transition-colors
+              duration-300
+            "
+          >
+            <Package
               className="
-                flex
-                items-center
-                gap-3
-                rounded-xl
-                border-2
-                border-emerald-200
-                dark:border-emerald-900/30
-                p-4
-                bg-emerald-50/50
-                dark:bg-emerald-900/10
-                transition-colors
-                duration-300
+                h-5
+                w-5
+                text-emerald-600
+                dark:text-emerald-400
+              "
+            />
+            <p
+              className="
+                text-sm
+                text-emerald-700
+                dark:text-emerald-400
+                font-medium
               "
             >
-              <Package
-                className="
-                  h-5
-                  w-5
-                  text-emerald-600
-                  dark:text-emerald-400
-                "
-              />
-              <p
-                className="
-                  text-sm
-                  text-emerald-700
-                  dark:text-emerald-400
-                  font-medium
-                "
-              >
-                All products have enough stock 🎉
-              </p>
-            </div>
-          ) : (
-            lowStockProducts.map((product) => (
+              All products have enough stock 🎉
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {lowStockProducts.map((product) => (
               <div
                 key={product._id}
                 className="
@@ -156,22 +164,15 @@ export default function LowStock({
                   border-red-200
                   dark:border-red-900/30
                   p-4
-                  transition-all
-                  duration-300
-                  hover:shadow-md
                   bg-red-50/30
-                  dark:bg-red-900/5
+                  dark:bg-red-900/10
+                  transition-colors
+                  duration-300
                   hover:bg-red-100/50
                   dark:hover:bg-red-900/20
                 "
               >
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                  "
-                >
+                <div className="flex items-center gap-3">
                   <div
                     className="
                       flex
@@ -209,42 +210,36 @@ export default function LowStock({
                     <p
                       className="
                         text-sm
-                        text-blue-600/70
+                        text-blue-500/60
                         dark:text-slate-400
                       "
                     >
-                      Minimum Stock: {product.minStock}
+                      Minimum Stock: {product.minStock ?? 10}
                     </p>
                   </div>
                 </div>
 
-                <div
+                <span
                   className="
-                    text-right
+                    rounded-full
+                    bg-red-100
+                    dark:bg-red-900/30
+                    px-3
+                    py-1
+                    text-xs
+                    font-medium
+                    text-red-700
+                    dark:text-red-400
+                    transition-colors
+                    duration-300
                   "
                 >
-                  <span
-                    className="
-                      rounded-full
-                      bg-red-100
-                      dark:bg-red-900/30
-                      px-3
-                      py-1
-                      text-xs
-                      font-medium
-                      text-red-700
-                      dark:text-red-400
-                      transition-colors
-                      duration-300
-                    "
-                  >
-                    {product.stock} left
-                  </span>
-                </div>
+                  {product.stock} left
+                </span>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

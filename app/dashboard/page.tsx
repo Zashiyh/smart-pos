@@ -30,24 +30,26 @@ const API_URL =
 async function getProducts() {
   try {
     const res = await fetch(
-      `${API_URL}/api/products`,
+      "http://localhost:3000/api/products",
       {
         cache: "no-store",
       }
     );
 
-    const data = await res.json();
+    const text = await res.text();
+
+    console.log("PRODUCT RESPONSE:", text);
+
+    const data = JSON.parse(text);
 
     if (data.success) {
       return data.products;
     }
 
     return [];
+
   } catch (error) {
-    console.log(
-      "Dashboard product error:",
-      error
-    );
+    console.log("PRODUCT ERROR:", error);
     return [];
   }
 }
@@ -86,7 +88,10 @@ export default async function DashboardPage() {
     getProducts(),
     getStats(),
   ]);
-
+ console.log(
+  "PRODUCT DATA:",
+  JSON.stringify(products, null, 2)
+);
   const stats = [
     {
       title: "Total Products",
@@ -234,36 +239,54 @@ export default async function DashboardPage() {
         </div>
       </FadeIn>
 
-      {/* RECENT SALES + LOW STOCK */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <FadeIn delay={0.5}>
-          <div className="bg-white dark:bg-slate-800/80 rounded-2xl shadow-sm border border-gray-100/50 dark:border-slate-700/50 p-6 hover:shadow-lg dark:hover:shadow-slate-900/30 transition-shadow duration-300 backdrop-blur-sm">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Sales</h2>
-                <p className="text-sm text-gray-500 dark:text-slate-400">Latest transactions</p>
-              </div>
-              <ShoppingBag className="w-5 h-5 text-gray-400 dark:text-slate-500" />
-            </div>
-            <RecentSales />
-          </div>
-        </FadeIn>
+      
+     {/* RECENT SALES + LOW STOCK */}
 
-        <FadeIn delay={0.6}>
-          <div className="bg-white dark:bg-slate-800/80 rounded-2xl shadow-sm border border-gray-100/50 dark:border-slate-700/50 p-6 hover:shadow-lg dark:hover:shadow-slate-900/30 transition-shadow duration-300 backdrop-blur-sm">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Low Stock Alert</h2>
-                <p className="text-sm text-gray-500 dark:text-slate-400">Items needing restock</p>
-              </div>
-              <div className="p-2 bg-red-50 dark:bg-red-900/30 rounded-lg">
-                <AlertTriangle className="w-5 h-5 text-red-500 dark:text-red-400" />
-              </div>
-            </div>
-            <LowStock products={products} />
-          </div>
-        </FadeIn>
+<div className="grid gap-6 lg:grid-cols-2">
+
+  <FadeIn delay={0.5}>
+    <div className="
+      bg-white
+      dark:bg-slate-800/80
+      rounded-2xl
+      shadow-sm
+      border
+      p-6
+    ">
+      <div className="flex items-center justify-between mb-4">
+
+        <div>
+          <h2 className="text-lg font-semibold">
+            Recent Sales
+          </h2>
+
+          <p className="text-sm text-muted-foreground">
+            Latest transactions
+          </p>
+        </div>
+
+        <ShoppingBag className="w-5 h-5 text-gray-400" />
+
       </div>
+
+
+      <RecentSales />
+
+    </div>
+  </FadeIn>
+
+
+
+  <FadeIn delay={0.6}>
+
+    <LowStock 
+      products={products}
+    />
+
+  </FadeIn>
+
+
+</div>
 
       {/* TOP PRODUCTS */}
       <FadeIn delay={0.7}>

@@ -1,60 +1,137 @@
-import mongoose, { Schema, Document } from "mongoose";
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+
+import { connectDB } from "@/lib/mongodb";
+import User from "@/models/user";
 
 
-export interface IUser extends Document {
+export async function PUT(req: NextRequest) {
 
-  name:string;
+  try {
 
-  email:string;
+    await connectDB();
 
-  password:string;
 
-  role:string;
+    const body = await req.json();
 
-  lastPasswordChange?:Date;
+
+    const {
+      userId,
+      currentPassword,
+      newPassword
+    } = body;
+
+
+
+    if(
+      !userId ||
+      !currentPassword ||
+      !newPassword
+    ){
+
+      return NextResponse.json(
+        {
+          success:false,
+          message:"All fields are required"
+        },
+        {
+          status:400
+        }
+      );
+
+    }
+
+
+
+    const user = await User.findById(userId);
+
+
+
+    if(!user){
+
+      return NextResponse.json(
+        {
+          success:false,
+          message:"User not found"
+        },
+        {
+          status:404
+        }
+      );
+
+    }
+
+
+
+    // check old password
+
+    const isMatch = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+
+
+    if(!isMatch){
+
+      return NextResponse.json(
+        {
+          success:false,
+          message:"Current password is incorrect"
+        },
+        {
+          status:401
+        }
+      );
+
+    }
+
+
+
+    // hash new password
+
+    const hashedPassword =
+      await bcrypt.hash(
+        newPassword,
+        10
+      );
+
+
+
+    user.password = hashedPassword;
+
+    user.lastPasswordChange = new Date();
+
+
+    await user.save();
+
+
+
+    return NextResponse.json(
+      {
+        success:true,
+        message:"Password changed successfully"
+      },
+      {
+        status:200
+      }
+    );
+
+
+
+  } catch(error:any){
+
+
+    return NextResponse.json(
+      {
+        success:false,
+        message:error.message
+      },
+      {
+        status:500
+      }
+    );
+
+
+  }
 
 }
-
-
-
-const UserSchema = new Schema<IUser>({
-
-name:{
-type:String,
-required:true,
-},
-
-
-email:{
-type:String,
-required:true,
-unique:true,
-},
-
-
-password:{
-type:String,
-required:true,
-},
-
-
-role:{
-type:String,
-default:"Admin",
-},
-
-
-lastPasswordChange:{
-type:Date,
-default:null,
-},
-
-
-},{
-timestamps:true
-});
-
-
-
-export default mongoose.models.User ||
-mongoose.model<IUser>("User",UserSchema);
