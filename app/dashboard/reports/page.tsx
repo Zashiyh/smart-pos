@@ -5,6 +5,8 @@ import TopProducts from "@/components/dashboard/top-products";
 import RecentSales from "@/components/dashboard/recent-sales";
 import LowStock from "@/components/dashboard/low-stock";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;  
+
 import {
   Wallet,
   ShoppingCart,
@@ -14,72 +16,111 @@ import {
   Calendar,
 } from "lucide-react";
 export const dynamic = "force-dynamic";
-// =====================================
+
 // GET REPORT STATS
-// =====================================
+
 
 async function getReports() {
   try {
-   const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:3000";
 
-
-const res = await fetch(
-  `${API_URL}/api/dashboard/stats`,
-  {
-    cache:"no-store",
-  }
-);
-
-    const data = await res.json();
-
-    if (data.success) {
-      return data.stats;
-    }
-
-    return null;
-  } catch (error) {
-    console.log(
-      "Reports stats error:",
-      error
-    );
-    return null;
-  }
-}
-
-// =====================================
-// GET PRODUCTS
-// =====================================
-
-async function getProducts() {
-  try {
     const res = await fetch(
-      "http://localhost:3000/api/products",
+      `${API_URL}/api/dashboard/stats`,
       {
         cache: "no-store",
       }
     );
 
-    const data = await res.json();
 
-    if (data.success) {
-      return data.products || [];
+    if (!res.ok) {
+      console.log("REPORT STATS STATUS:", res.status);
+      return null;
     }
 
-    return [];
+
+    const data = await res.json();
+
+
+    if (data.success) {
+      return data.stats;
+    }
+
+
+    return null;
+
+
   } catch (error) {
+
+    console.log(
+      "Reports stats error:",
+      error
+    );
+
+    return null;
+
+  }
+}
+
+
+// GET PRODUCTS
+
+
+async function getProducts() {
+
+  try {
+
+    const res = await fetch(
+      `${API_URL}/api/products`,
+      {
+        cache: "no-store",
+      }
+    );
+
+
+    if (!res.ok) {
+      console.log(
+        "PRODUCT API STATUS:",
+        res.status
+      );
+
+      return [];
+    }
+
+
+    const data = await res.json();
+
+
+    console.log(
+      "REPORT PRODUCTS:",
+      data.products
+    );
+
+
+    if (data.success) {
+
+      return data.products || [];
+
+    }
+
+
+    return [];
+
+
+  } catch(error) {
+
     console.log(
       "Products fetch error:",
       error
     );
+
     return [];
+
   }
+
 }
 
-// =====================================
+
 // REPORT PAGE
-// =====================================
+
 
 export default async function ReportsPage() {
   const [statsData, products] = await Promise.all([
