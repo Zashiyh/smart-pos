@@ -16,31 +16,33 @@ interface Product {
   status: string;
 }
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "";
+
 async function getProducts(): Promise<Product[]> {
   try {
-    const response = await fetch(
-      "http://localhost:3000/api/products",
+    const res = await fetch(
+      `${API_URL}/api/products`,
       {
         cache: "no-store",
       }
     );
 
-    const data = await response.json();
-
-    if (data.success) {
-      return data.products;
+    if (!res.ok) {
+      console.log("PRODUCT API ERROR:", res.status);
+      return [];
     }
 
-    return [];
+    const data = await res.json();
+
+    console.log("PRODUCT API:", data);
+
+    return data.products || [];
   } catch (error) {
-    console.log(
-      "PRODUCT FETCH ERROR:",
-      error
-    );
+    console.error("PRODUCT FETCH ERROR:", error);
     return [];
   }
 }
-
 export default async function ProductsPage() {
   const products = await getProducts();
 
