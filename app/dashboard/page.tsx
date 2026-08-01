@@ -23,65 +23,65 @@ const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "";
 
-// =================================
+
 // GET PRODUCTS
-// =================================
+
 
 async function getProducts() {
   try {
     const res = await fetch(
-      "http://localhost:3000/api/products",
+      `${API_URL}/api/products`,
       {
         cache: "no-store",
       }
     );
 
-    const text = await res.text();
-
-    console.log("PRODUCT RESPONSE:", text);
-
-    const data = JSON.parse(text);
-
-    if (data.success) {
-      return data.products;
+    if (!res.ok) {
+      console.error("Products API Error:", res.status);
+      return [];
     }
 
-    return [];
+    const data = await res.json();
 
+    console.log("PRODUCTS:", data);
+
+    return data.success ? data.products : [];
   } catch (error) {
-    console.log("PRODUCT ERROR:", error);
+    console.error("PRODUCT FETCH ERROR:", error);
     return [];
   }
 }
+
+
+// GET STATS
+
 
 async function getStats() {
   try {
     const res = await fetch(
-      "http://localhost:3000/api/dashboard/stats",
+      `${API_URL}/api/dashboard/stats`,
       {
         cache: "no-store",
       }
     );
 
-    const data = await res.json();
-
-    if (data.success) {
-      return data.stats;
+    if (!res.ok) {
+      console.error("Stats API Error:", res.status);
+      return null;
     }
 
-    return null;
+    const data = await res.json();
+
+    return data.success ? data.stats : null;
   } catch (error) {
-    console.log(
-      "Dashboard stats error:",
-      error
-    );
+    console.error("Dashboard stats error:", error);
     return null;
   }
 }
 
-// =================================
+
 // DASHBOARD PAGE
-// =================================
+
 
 export default async function DashboardPage() {
   const [products, statsData] = await Promise.all([
