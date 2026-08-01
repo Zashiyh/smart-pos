@@ -87,7 +87,7 @@ export default async function ProductsPage() {
             mt-1
           "
         >
-          Manage inventory products
+          Manageeeee inventory products
         </p>
       </div>
 
