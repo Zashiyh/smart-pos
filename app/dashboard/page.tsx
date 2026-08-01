@@ -22,7 +22,7 @@ import {
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "";
-export const dynamic = "force-dynamic";
+
 // =================================
 // GET PRODUCTS
 // =================================
@@ -30,11 +30,11 @@ export const dynamic = "force-dynamic";
 async function getProducts() {
   try {
     const res = await fetch(
-  `${API_URL}/api/dashboard/stats`,
-  {
-    cache:"no-store",
-  }
-);
+      "http://localhost:3000/api/products",
+      {
+        cache: "no-store",
+      }
+    );
 
     const text = await res.text();
 
