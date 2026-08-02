@@ -22,6 +22,7 @@ import {
   CreditCard,
   Banknote,
   Wallet,
+  FileText,
 } from "lucide-react";
 
 interface Product {
@@ -44,6 +45,7 @@ export default function SalesPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [recentSales, setRecentSales] = useState<any[]>([]);
 
   const [customerName, setCustomerName] =
     useState("Walk-in Customer");
@@ -62,15 +64,26 @@ export default function SalesPage() {
 
   useEffect(() => {
     loadProducts();
+    loadRecentSales();
   }, []);
 
   async function loadProducts() {
     const res = await fetch("/api/products");
-
     const data = await res.json();
-
     if (data.success) {
       setProducts(data.products);
+    }
+  }
+
+  async function loadRecentSales() {
+    try {
+      const res = await fetch("/api/sales?limit=5");
+      const data = await res.json();
+      if (data.success) {
+        setRecentSales(data.sales || []);
+      }
+    } catch (error) {
+      console.log("Error loading recent sales:", error);
     }
   }
 
@@ -90,7 +103,6 @@ export default function SalesPage() {
             : item
         )
       );
-
       return;
     }
 
@@ -220,8 +232,8 @@ export default function SalesPage() {
       }
 
       setCart([]);
-
       await loadProducts();
+      await loadRecentSales();
 
       router.push(
         `/dashboard/invoices/${data.sale._id}`
@@ -855,6 +867,187 @@ export default function SalesPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* =========================
+          RECENT SALES TABLE
+      ========================== */}
+      <Card
+        className="
+          rounded-2xl
+          border-0
+          shadow-sm
+          hover:shadow-lg
+          transition-all
+          duration-300
+          bg-white
+          dark:bg-slate-800/90
+          backdrop-blur-sm
+        "
+      >
+        <CardHeader className="border-b border-blue-100/50 dark:border-blue-900/30 pb-4">
+          <CardTitle
+            className="
+              text-xl
+              font-semibold
+              text-blue-900
+              dark:text-white
+              flex
+              items-center
+              gap-2
+            "
+          >
+            <FileText className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+            Recent Sales
+            <span
+              className="
+                ml-auto
+                text-sm
+                font-medium
+                text-blue-600/70
+                dark:text-slate-400
+              "
+            >
+              Last 5 transactions
+            </span>
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent className="pt-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-blue-100/50 dark:border-blue-900/30">
+                  <th className="p-3 text-left text-blue-700 dark:text-slate-300 font-semibold">
+                    Invoice
+                  </th>
+                  <th className="p-3 text-left text-blue-700 dark:text-slate-300 font-semibold">
+                    Customer
+                  </th>
+                  <th className="p-3 text-left text-blue-700 dark:text-slate-300 font-semibold">
+                    Amount
+                  </th>
+                  <th className="p-3 text-left text-blue-700 dark:text-slate-300 font-semibold">
+                    Payment
+                  </th>
+                  <th className="p-3 text-left text-blue-700 dark:text-slate-300 font-semibold">
+                    Status
+                  </th>
+                  <th className="p-3 text-left text-blue-700 dark:text-slate-300 font-semibold">
+                    Date
+                  </th>
+                  <th className="p-3 text-left text-blue-700 dark:text-slate-300 font-semibold">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {recentSales.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="
+                        p-6
+                        text-center
+                        text-blue-500/60
+                        dark:text-slate-500
+                      "
+                    >
+                      No recent sales found
+                    </td>
+                  </tr>
+                ) : (
+                  recentSales.map((sale) => (
+                    <tr
+                      key={sale._id}
+                      className="
+                        border-b
+                        border-blue-100/50
+                        dark:border-blue-900/30
+                        hover:bg-blue-50/50
+                        dark:hover:bg-slate-700/30
+                        transition-colors
+                        duration-200
+                      "
+                    >
+                      <td className="p-3 font-medium text-blue-900 dark:text-white">
+                        {sale.invoiceNumber}
+                      </td>
+
+                      <td className="p-3 text-blue-700 dark:text-slate-300">
+                        {sale.customerName}
+                      </td>
+
+                      <td className="p-3 font-semibold text-blue-900 dark:text-white">
+                        LKR {sale.totalAmount?.toLocaleString() || 0}
+                      </td>
+
+                      <td className="p-3 text-blue-700 dark:text-slate-300">
+                        {sale.paymentMethod}
+                      </td>
+
+                      <td className="p-3">
+                        <span
+                          className={`
+                            rounded-full
+                            px-3
+                            py-1
+                            text-xs
+                            font-medium
+                            ${
+                              sale.status === "Completed"
+                                ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
+                                : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400"
+                            }
+                          `}
+                        >
+                          {sale.status}
+                        </span>
+                      </td>
+
+                      <td className="p-3 text-blue-600/70 dark:text-slate-400">
+                        {new Date(sale.createdAt).toLocaleDateString()}
+                      </td>
+
+                      <td className="p-3">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            router.push(
+                              `/dashboard/invoices/${sale._id}`
+                            )
+                          }
+                          className="
+                            rounded-xl
+                            border-2
+                            border-blue-200
+                            dark:border-blue-900/30
+                            bg-white
+                            dark:bg-slate-800
+                            text-blue-600
+                            dark:text-blue-400
+                            hover:bg-blue-50
+                            dark:hover:bg-slate-700/50
+                            hover:text-blue-700
+                            dark:hover:text-blue-300
+                            transition-all
+                            duration-300
+                            hover:shadow-md
+                          "
+                        >
+                          <FileText className="h-4 w-4 mr-1" />
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
