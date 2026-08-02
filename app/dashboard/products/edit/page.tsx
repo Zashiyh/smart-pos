@@ -1,9 +1,9 @@
 "use client";
 
 
-// ===============================
+
 // IMPORTS
-// ===============================
+
 
 import { useEffect, useState } from "react";
 
@@ -23,9 +23,9 @@ export default function EditProductPage() {
 
 
 
-  // ===============================
+ 
   // STATES
-  // ===============================
+ 
 
 
   const [product, setProduct] = useState<any>(null);
@@ -43,10 +43,10 @@ export default function EditProductPage() {
 
 
 
-  // ===============================
+ 
   // GET PRODUCT ID
   // LOAD PRODUCT DATA
-  // ===============================
+
 
 
   useEffect(() => {
@@ -146,9 +146,9 @@ export default function EditProductPage() {
 
 
 
-  // ===============================
+
   // HANDLE INPUT CHANGE
-  // ===============================
+
 
 
   const handleChange = (
@@ -177,10 +177,10 @@ export default function EditProductPage() {
 
 
 
-  // ===============================
+
   // UPDATE PRODUCT
   // PUT API
-  // ===============================
+ 
 
 
   const handleUpdate = async()=>{
@@ -308,9 +308,9 @@ export default function EditProductPage() {
 
 
 
-  // ===============================
+
   // LOADING SCREEN
-  // ===============================
+
 
 
   if(loading){

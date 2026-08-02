@@ -19,9 +19,9 @@ import TransactionTable from "@/components/stock/transaction-table";
 
 
 
-// =================================
+
 // GET STOCK TRANSACTIONS
-// =================================
+
 
 
 async function getTransactions() {
@@ -77,9 +77,9 @@ async function getTransactions() {
 
 
 
-// =================================
+
 // INVENTORY PAGE
-// =================================
+
 
 
 export default async function InventoryPage(){
