@@ -1,11 +1,11 @@
-// app/dashboard/page.tsx
+
 import StatsCard from "@/components/dashboard/stats-card";
 import SalesOverview from "@/components/dashboard/sales-overview";
 import RecentSales from "@/components/dashboard/recent-sales";
 import LowStock from "@/components/dashboard/low-stock";
 import TopProducts from "@/components/dashboard/top-products";
 import FadeIn from "@/components/animations/fade-in";
-
+import UnauthorizedMessage from "@/components/dashboard/unauthorized-message";
 import {
   Package,
   Boxes,
@@ -83,7 +83,15 @@ async function getStats() {
 // DASHBOARD PAGE
 
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    error?: string;
+  }>;
+}) {
+
+  const params = await searchParams;
   const [products, statsData] = await Promise.all([
     getProducts(),
     getStats(),
@@ -143,6 +151,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-blue-900/20 p-6 space-y-8 transition-colors duration-300">
+      {params.error === "unauthorized" && (
+      <UnauthorizedMessage />
+    )}
       {/* HEADER */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <FadeIn>

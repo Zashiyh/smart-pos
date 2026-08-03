@@ -28,7 +28,7 @@ const menuItems = [
     title: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
-    roles: ["admin"],
+    roles: ["admin", "cashier"],
   },
 
   {
