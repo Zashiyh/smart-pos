@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 
-export function middleware(req: NextRequest) {
+
+export async function middleware(req: NextRequest) {
 
   const token =
     req.cookies.get("token")?.value;
-
-  const role =
-    req.cookies.get("role")?.value?.toLowerCase();
 
 
   const { pathname } =
@@ -14,56 +13,91 @@ export function middleware(req: NextRequest) {
 
 
 
-  // ===============================
-  // PROTECT DASHBOARD
-  // ===============================
-
   if (pathname.startsWith("/dashboard")) {
 
 
+    // No token
     if (!token) {
 
       return NextResponse.redirect(
-        new URL(
-          "/login",
-          req.url
-        )
+        new URL("/login", req.url)
       );
 
     }
 
-  }
+
+
+    let role = "";
 
 
 
-  // ===============================
-  // ADMIN ONLY ROUTES
-  // ===============================
+    try {
 
-  const adminOnlyRoutes = [
 
-    "/dashboard/products",
-    "/dashboard/categories",
-    "/dashboard/suppliers",
-    "/dashboard/reports",
-    "/dashboard/settings",
-
-  ];
+      const secret =
+        new TextEncoder().encode(
+          process.env.JWT_SECRET!
+        );
 
 
 
-  const isAdminOnly =
-    adminOnlyRoutes.some(
-      (route) =>
-        pathname.startsWith(route)
-    );
+      const { payload } =
+        await jwtVerify(
+          token,
+          secret
+        );
 
 
 
-  if (isAdminOnly) {
+      role =
+        String(payload.role)
+          .toLowerCase();
 
 
-    if (role !== "admin") {
+
+    } catch(error) {
+
+
+      console.log(
+        "JWT Verify Error:",
+        error
+      );
+
+
+      return NextResponse.redirect(
+        new URL("/login", req.url)
+      );
+
+
+    }
+
+
+
+
+    const adminOnlyRoutes = [
+
+      "/dashboard/products",
+      "/dashboard/categories",
+      "/dashboard/suppliers",
+      "/dashboard/reports",
+      "/dashboard/settings",
+
+    ];
+
+
+
+    const isAdminOnly =
+      adminOnlyRoutes.some(
+        (route)=>
+          pathname.startsWith(route)
+      );
+
+
+
+    if (
+      isAdminOnly &&
+      role !== "admin"
+    ) {
 
 
       return NextResponse.redirect(
@@ -77,13 +111,10 @@ export function middleware(req: NextRequest) {
     }
 
 
+
   }
 
 
-
-  // ===============================
-  // ALLOW REQUEST
-  // ===============================
 
   return NextResponse.next();
 
@@ -93,8 +124,8 @@ export function middleware(req: NextRequest) {
 
 export const config = {
 
-  matcher: [
-    "/dashboard/:path*",
-  ],
+  matcher:[
+    "/dashboard/:path*"
+  ]
 
 };

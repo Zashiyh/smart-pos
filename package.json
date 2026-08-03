@@ -23,6 +23,7 @@
     "framer-motion": "^12.42.2",
     "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.3.8",
+    "jose": "^6.2.7",
     "jsonwebtoken": "^9.0.3",
     "jspdf": "^4.2.1",
     "lucide-react": "^1.27.0",
